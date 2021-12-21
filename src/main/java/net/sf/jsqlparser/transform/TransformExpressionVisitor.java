@@ -41,7 +41,11 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.ADDITION);
         if (rule != null) {
             Expression expression = rule.transformFunction.apply(rule, expr);
-            return expression.acceptAndReturn(this);
+            if (expression instanceof Addition) {
+                return super.visit((Addition) expression);
+            } else {
+                return expression.acceptAndReturn(this);
+            }
         }
 
         super.visit(expr);
@@ -53,7 +57,11 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.DIVISION);
         if (rule != null) {
             Expression expression = rule.transformFunction.apply(rule, expr);
-            return expression.acceptAndReturn(this);
+            if (expression instanceof Division) {
+                return super.visit((Division) expression);
+            } else {
+                return expression.acceptAndReturn(this);
+            }
         }
 
         super.visit(expr);
@@ -65,7 +73,12 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.CAST);
         if (rule != null) {
             Expression expression = rule.transformFunction.apply(rule, expr);
-            return expression.acceptAndReturn(this);
+
+            if (expression instanceof Division) {
+                return super.visit((Division) expression);
+            } else {
+                return expression.acceptAndReturn(this);
+            }
         }
 
         super.visit(expr);
