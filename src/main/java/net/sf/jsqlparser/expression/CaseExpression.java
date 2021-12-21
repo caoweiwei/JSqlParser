@@ -41,7 +41,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
  * </code></pre>
  *
  */
-public class CaseExpression extends ASTNodeAccessImpl implements Expression {
+public class CaseExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private boolean usingBrackets = false;
     private Expression switchExpression;
@@ -51,6 +51,11 @@ public class CaseExpression extends ASTNodeAccessImpl implements Expression {
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 
     public Expression getSwitchExpression() {

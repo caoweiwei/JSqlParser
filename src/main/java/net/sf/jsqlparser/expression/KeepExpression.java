@@ -22,7 +22,11 @@ public class KeepExpression extends ASTNodeAccessImpl implements Expression {
     private String name;
     private List<OrderByElement> orderByElements;
     private boolean first = false;
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

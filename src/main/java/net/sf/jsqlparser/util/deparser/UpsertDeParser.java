@@ -95,7 +95,7 @@ public class UpsertDeParser extends AbstractDeParser<Upsert> implements ItemsLis
             buffer.append(column.getFullyQualifiedName()).append(" = ");
 
             Expression expression = upsert.getDuplicateUpdateExpressionList().get(i);
-            expression.accept(expressionVisitor);
+            expression.acceptAndReturn(expressionVisitor);
             if (i < upsert.getDuplicateUpdateColumns().size() - 1) {
                 buffer.append(", ");
             }
@@ -107,7 +107,7 @@ public class UpsertDeParser extends AbstractDeParser<Upsert> implements ItemsLis
         buffer.append(" VALUES (");
         for (Iterator<Expression> iter = expressionList.getExpressions().iterator(); iter.hasNext();) {
             Expression expression = iter.next();
-            expression.accept(expressionVisitor);
+            expression.acceptAndReturn(expressionVisitor);
             if (iter.hasNext()) {
                 buffer.append(", ");
             }
@@ -127,7 +127,7 @@ public class UpsertDeParser extends AbstractDeParser<Upsert> implements ItemsLis
             buffer.append("(");
             for (Iterator<Expression> iter = it.next().getExpressions().iterator(); iter.hasNext();) {
                 Expression expression = iter.next();
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (iter.hasNext()) {
                     buffer.append(", ");
                 }

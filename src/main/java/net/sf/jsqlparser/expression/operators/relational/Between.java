@@ -11,6 +11,7 @@ package net.sf.jsqlparser.expression.operators.relational;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
 /**
@@ -26,7 +27,11 @@ public class Between extends ASTNodeAccessImpl implements Expression {
     public Expression getBetweenExpressionEnd() {
         return betweenExpressionEnd;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public Expression getBetweenExpressionStart() {
         return betweenExpressionStart;
     }

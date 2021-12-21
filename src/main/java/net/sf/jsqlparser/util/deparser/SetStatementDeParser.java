@@ -44,7 +44,7 @@ public class SetStatementDeParser extends AbstractDeParser<SetStatement> {
                 if (j > 0) {
                     buffer.append(", ");
                 }
-                expressions.get(j).accept(expressionVisitor);
+                expressions.set(j, expressions.get(j).acceptAndReturn(expressionVisitor));
             }
         }
 

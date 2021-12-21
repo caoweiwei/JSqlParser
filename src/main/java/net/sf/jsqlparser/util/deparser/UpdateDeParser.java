@@ -80,7 +80,7 @@ public class UpdateDeParser extends AbstractDeParser<Update> implements OrderByV
                 if (i > 0) {
                     buffer.append(", ");
                 }
-                updateSet.getColumns().get(i).accept(expressionVisitor);
+                updateSet.getColumns().get(i).acceptAndReturn(expressionVisitor);
             }
             if (updateSet.isUsingBracketsForColumns()) {
                 buffer.append(")");
@@ -95,7 +95,7 @@ public class UpdateDeParser extends AbstractDeParser<Update> implements OrderByV
                 if (i > 0) {
                     buffer.append(", ");
                 }
-                updateSet.getExpressions().get(i).accept(expressionVisitor);
+                updateSet.getExpressions().get(i).acceptAndReturn(expressionVisitor);
             }
             if (updateSet.isUsingBracketsForValues()) {
                 buffer.append(")");
@@ -118,7 +118,7 @@ public class UpdateDeParser extends AbstractDeParser<Update> implements OrderByV
 
         if (update.getWhere() != null) {
             buffer.append(" WHERE ");
-            update.getWhere().accept(expressionVisitor);
+            update.getWhere().acceptAndReturn(expressionVisitor);
         }
         if (update.getOrderByElements() != null) {
             new OrderByDeParser(expressionVisitor, buffer).deParse(update.getOrderByElements());
@@ -151,7 +151,7 @@ public class UpdateDeParser extends AbstractDeParser<Update> implements OrderByV
 
     @Override
     public void visit(OrderByElement orderBy) {
-        orderBy.getExpression().accept(expressionVisitor);
+        orderBy.getExpression().acceptAndReturn(expressionVisitor);
         if (!orderBy.isAsc()) {
             buffer.append(" DESC");
         } else if (orderBy.isAscDescPresent()) {

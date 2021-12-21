@@ -22,7 +22,11 @@ public class UserVariable extends ASTNodeAccessImpl implements Expression {
     public UserVariable() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public UserVariable(String name) {
         this.name = name;
     }

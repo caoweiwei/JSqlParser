@@ -27,7 +27,11 @@ public class NotEqualsTo extends ComparisonOperator {
         setLeftExpression(left);
         setRightExpression(right);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public NotEqualsTo withLeftExpression(Expression expression) {
         return (NotEqualsTo) super.withLeftExpression(expression);

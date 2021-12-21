@@ -266,7 +266,7 @@ public class TestUtils {
         expressionDeParser.setBuffer(stringBuilder);
         SelectDeParser selectDeParser = new SelectDeParser(expressionDeParser, stringBuilder);
         expressionDeParser.setSelectVisitor(selectDeParser);
-        parsed.accept(expressionDeParser);
+        parsed.acceptAndReturn(expressionDeParser);
 
         assertEquals(expression, stringBuilder.toString());
     }

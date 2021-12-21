@@ -12,7 +12,7 @@ package net.sf.jsqlparser.expression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 
-public class CastExpression extends ASTNodeAccessImpl implements Expression {
+public class CastExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private Expression leftExpression;
     private ColDataType type;
@@ -48,6 +48,12 @@ public class CastExpression extends ASTNodeAccessImpl implements Expression {
 
     public void setLeftExpression(Expression expression) {
         leftExpression = expression;
+    }
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 
     @Override

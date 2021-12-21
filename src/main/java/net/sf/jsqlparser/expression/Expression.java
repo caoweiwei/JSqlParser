@@ -12,7 +12,7 @@ package net.sf.jsqlparser.expression;
 import net.sf.jsqlparser.Model;
 import net.sf.jsqlparser.parser.ASTNodeAccess;
 
-public interface Expression extends ASTNodeAccess, Model {
+public interface Expression extends ASTNodeAccess, Model, ReturnExpression {
 
     void accept(ExpressionVisitor expressionVisitor);
 

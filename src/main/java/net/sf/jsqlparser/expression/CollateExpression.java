@@ -11,7 +11,7 @@ package net.sf.jsqlparser.expression;
 
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class CollateExpression extends ASTNodeAccessImpl implements Expression {
+public class CollateExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private Expression leftExpression;
     private String collate;
@@ -28,6 +28,11 @@ public class CollateExpression extends ASTNodeAccessImpl implements Expression {
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 
     public Expression getLeftExpression() {

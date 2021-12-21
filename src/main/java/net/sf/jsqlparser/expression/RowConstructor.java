@@ -21,7 +21,11 @@ public class RowConstructor extends ASTNodeAccessImpl implements Expression {
 
     public RowConstructor() {
     }
-    
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public ArrayList<ColumnDefinition> getColumnDefinitions() {
         return columnDefinitions;
     }

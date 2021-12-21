@@ -102,7 +102,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
      */
     public List<String> getTableList(Expression expr) {
         init(true);
-        expr.accept(this);
+        expr = expr.acceptAndReturn(this);
         return tables;
     }
 
@@ -130,15 +130,16 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
             }
         }
         if (plainSelect.getWhere() != null) {
-            plainSelect.getWhere().accept(this);
+            plainSelect.setWhere(plainSelect.getWhere().acceptAndReturn(this));
         }
 
         if (plainSelect.getHaving() != null) {
-            plainSelect.getHaving().accept(this);
+            plainSelect.setHaving(plainSelect.getHaving().acceptAndReturn(this));
         }
 
         if (plainSelect.getOracleHierarchical() != null) {
-            plainSelect.getOracleHierarchical().accept(this);
+            plainSelect.getOracleHierarchical().acceptAndReturn(this);
+            plainSelect.getOracleHierarchical().acceptAndReturn(this);
         }
     }
 
@@ -172,8 +173,9 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     }
 
     @Override
-    public void visit(Addition addition) {
+    public Expression visit(Addition addition) {
         visitBinaryExpression(addition);
+        return addition;
     }
 
     @Override
@@ -183,9 +185,9 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(Between between) {
-        between.getLeftExpression().accept(this);
-        between.getBetweenExpressionStart().accept(this);
-        between.getBetweenExpressionEnd().accept(this);
+        between.setLeftExpression(between.getLeftExpression().acceptAndReturn(this));
+        between.setBetweenExpressionStart(between.getBetweenExpressionStart().acceptAndReturn(this));
+        between.setBetweenExpressionEnd(between.getBetweenExpressionEnd().acceptAndReturn(this));
     }
 
     @Override
@@ -196,8 +198,9 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     }
 
     @Override
-    public void visit(Division division) {
+    public Expression visit(Division division) {
         visitBinaryExpression(division);
+        return division;
     }
 
     @Override
@@ -216,11 +219,13 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     }
 
     @Override
-    public void visit(Function function) {
+    public Function visit(Function function) {
         ExpressionList exprList = function.getParameters();
         if (exprList != null) {
             visit(exprList);
         }
+
+        return function;
     }
 
     @Override
@@ -236,10 +241,12 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     @Override
     public void visit(InExpression inExpression) {
         if (inExpression.getLeftExpression() != null) {
-            inExpression.getLeftExpression().accept(this);
+            inExpression.setLeftExpression(inExpression.getLeftExpression().acceptAndReturn(this));
+
         }
         if (inExpression.getRightExpression() != null) {
-            inExpression.getRightExpression().accept(this);
+            inExpression.setRightExpression(inExpression.getRightExpression().acceptAndReturn(this));
+
         } else if (inExpression.getRightItemsList() != null) {
             inExpression.getRightItemsList().accept(this);
         }
@@ -252,7 +259,8 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(SignedExpression signedExpression) {
-        signedExpression.getExpression().accept(this);
+        signedExpression.setExpression(signedExpression.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -277,7 +285,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(ExistsExpression existsExpression) {
-        existsExpression.getRightExpression().accept(this);
+        existsExpression.getRightExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -322,7 +330,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(Parenthesis parenthesis) {
-        parenthesis.getExpression().accept(this);
+        parenthesis.getExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -337,7 +345,8 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(NotExpression notExpr) {
-        notExpr.getExpression().accept(this);
+        notExpr.setExpression(notExpr.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -351,21 +360,22 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     }
 
     public void visitBinaryExpression(BinaryExpression binaryExpression) {
-        binaryExpression.getLeftExpression().accept(this);
-        binaryExpression.getRightExpression().accept(this);
+        binaryExpression.setLeftExpression(binaryExpression.getLeftExpression().acceptAndReturn(this));
+        binaryExpression.setRightExpression(binaryExpression.getRightExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(ExpressionList expressionList) {
         for (Expression expression : expressionList.getExpressions()) {
-            expression.accept(this);
+            expression = expression.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(NamedExpressionList namedExpressionList) {
         for (Expression expression : namedExpressionList.getExpressions()) {
-            expression.accept(this);
+            expression = expression.acceptAndReturn(this);
         }
     }
 
@@ -392,15 +402,17 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     @Override
     public void visit(CaseExpression caseExpression) {
         if (caseExpression.getSwitchExpression() != null) {
-            caseExpression.getSwitchExpression().accept(this);
+            caseExpression.setSwitchExpression(caseExpression.getSwitchExpression().acceptAndReturn(this));
+
         }
         if (caseExpression.getWhenClauses() != null) {
             for (WhenClause when : caseExpression.getWhenClauses()) {
-                when.accept(this);
+                when.acceptAndReturn(this);
             }
         }
         if (caseExpression.getElseExpression() != null) {
-            caseExpression.getElseExpression().accept(this);
+            caseExpression.setElseExpression(caseExpression.getElseExpression().acceptAndReturn(this));
+
         }
     }
 
@@ -412,10 +424,10 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     @Override
     public void visit(WhenClause whenClause) {
         if (whenClause.getWhenExpression() != null) {
-            whenClause.getWhenExpression().accept(this);
+            whenClause.setWhenExpression(whenClause.getWhenExpression().acceptAndReturn(this));
         }
         if (whenClause.getThenExpression() != null) {
-            whenClause.getThenExpression().accept(this);
+            whenClause.setThenExpression(whenClause.getThenExpression().acceptAndReturn(this));
         }
     }
 
@@ -459,12 +471,14 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(CastExpression cast) {
-        cast.getLeftExpression().accept(this);
+        cast.setLeftExpression(cast.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(TryCastExpression cast) {
-        cast.getLeftExpression().accept(this);
+        cast.setLeftExpression(cast.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -533,11 +547,13 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     @Override
     public void visit(OracleHierarchicalExpression oexpr) {
         if (oexpr.getStartExpression() != null) {
-            oexpr.getStartExpression().accept(this);
+            oexpr.setStartExpression(oexpr.getStartExpression().acceptAndReturn(this));
+
         }
 
         if (oexpr.getConnectExpression() != null) {
-            oexpr.getConnectExpression().accept(this);
+            oexpr.setConnectExpression(oexpr.getConnectExpression().acceptAndReturn(this));
+
         }
     }
 
@@ -578,7 +594,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(SelectExpressionItem item) {
-        item.getExpression().accept(this);
+        item.setExpression(item.getExpression().acceptAndReturn(this));
     }
 
     @Override
@@ -624,7 +640,8 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         }
 
         if (delete.getWhere() != null) {
-            delete.getWhere().accept(this);
+            delete.setWhere(delete.getWhere().acceptAndReturn(this));
+
         }
     }
 
@@ -638,7 +655,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         }
         if (update.getExpressions() != null) {
             for (Expression expression : update.getExpressions()) {
-                expression.accept(this);
+                expression.acceptAndReturn(this);
             }
         }
 
@@ -653,7 +670,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         }
 
         if (update.getWhere() != null) {
-            update.getWhere().accept(this);
+            update.getWhere().acceptAndReturn(this);
         }
     }
 
@@ -673,7 +690,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
         visit(replace.getTable());
         if (replace.getExpressions() != null) {
             for (Expression expression : replace.getExpressions()) {
-                expression.accept(this);
+                expression.acceptAndReturn(this);
             }
         }
         if (replace.getItemsList() != null) {
@@ -747,13 +764,13 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     @Override
     public void visit(RowConstructor rowConstructor) {
         for (Expression expr : rowConstructor.getExprList().getExpressions()) {
-            expr.accept(this);
+            expr.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(RowGetExpression rowGetExpression) {
-        rowGetExpression.getExpression().accept(this);
+        rowGetExpression.getExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -867,7 +884,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(CollateExpression col) {
-        col.getLeftExpression().accept(this);
+        col.getLeftExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -893,22 +910,22 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(ArrayExpression array) {
-        array.getObjExpression().accept(this);
+        array.getObjExpression().acceptAndReturn(this);
         if (array.getStartIndexExpression() != null){
-            array.getIndexExpression().accept(this);
+            array.getIndexExpression().acceptAndReturn(this);
         }
         if (array.getStartIndexExpression() != null) {
-            array.getStartIndexExpression().accept(this);
+            array.getStartIndexExpression().acceptAndReturn(this);
         }
         if (array.getStopIndexExpression() != null) {
-            array.getStopIndexExpression().accept(this);
+            array.getStopIndexExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(ArrayConstructor array) {
         for (Expression expression : array.getExpressions()) {
-            expression.accept(this);
+            expression.acceptAndReturn(this);
         }
     }
 
@@ -934,8 +951,8 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     
     @Override
     public void visit(VariableAssignment var) {
-        var.getVariable().accept(this);
-        var.getExpression().accept(this);
+        var.getVariable().acceptAndReturn(this);
+        var.getExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -954,7 +971,8 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
 
     @Override
     public void visit(TimezoneExpression aThis) {
-        aThis.getLeftExpression().accept(this);
+        aThis.setLeftExpression(aThis.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -975,27 +993,28 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     public void visit(JsonAggregateFunction expression) {
         Expression expr = expression.getExpression();
         if (expr!=null) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
         
         expr = expression.getFilterExpression();
         if (expr!=null) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
      }
 
     @Override
     public void visit(JsonFunction expression) {
         for (JsonFunctionExpression expr: expression.getExpressions()) {
-            expr.getExpression().accept(this);
+            expr.getExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(ConnectByRootOperator connectByRootOperator) {
-        connectByRootOperator.getColumn().accept(this);
+        connectByRootOperator.getColumn().acceptAndReturn(this);
     }
   
+    @Override
     public void visit(IfElseStatement ifElseStatement) {
         ifElseStatement.getIfStatement().accept(this);
         if (ifElseStatement.getElseStatement()!=null) {
@@ -1003,8 +1022,9 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
           }
     }
     
+    @Override
     public void visit(OracleNamedFunctionParameter oracleNamedFunctionParameter) {
-        oracleNamedFunctionParameter.getExpression().accept(this);
+        oracleNamedFunctionParameter.getExpression().acceptAndReturn(this);
     }
     
     @Override

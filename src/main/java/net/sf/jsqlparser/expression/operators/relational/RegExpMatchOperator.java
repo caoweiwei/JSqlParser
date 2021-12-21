@@ -21,7 +21,11 @@ public class RegExpMatchOperator extends BinaryExpression {
     public RegExpMatchOperator(RegExpMatchOperatorType operatorType) {
         this.operatorType = Objects.requireNonNull(operatorType, "The provided RegExpMatchOperatorType must not be NULL.");
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public RegExpMatchOperatorType getOperatorType() {
         return operatorType;
     }

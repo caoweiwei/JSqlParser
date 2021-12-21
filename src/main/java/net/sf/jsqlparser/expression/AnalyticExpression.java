@@ -23,7 +23,7 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
  *
  * @author tw
  */
-public class AnalyticExpression extends ASTNodeAccessImpl implements Expression {
+public class AnalyticExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression  {
 
     private final OrderByClause orderBy = new OrderByClause();
     private final PartitionByClause partitionBy = new PartitionByClause();
@@ -357,5 +357,11 @@ public class AnalyticExpression extends ASTNodeAccessImpl implements Expression 
 
     public void setFuncOrderBy(List<OrderByElement> funcOrderBy) {
         this.funcOrderBy = funcOrderBy;
+    }
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 }

@@ -24,7 +24,11 @@ public class LongValue extends ASTNodeAccessImpl implements Expression {
     public LongValue() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public LongValue(final String value) {
         String val = value;
         if (val.charAt(0) == '+') {

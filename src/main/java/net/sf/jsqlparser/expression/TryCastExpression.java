@@ -22,7 +22,11 @@ public class TryCastExpression extends ASTNodeAccessImpl implements Expression {
     public RowConstructor getRowConstructor() {
         return rowConstructor;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public void setRowConstructor(RowConstructor rowConstructor) {
         this.rowConstructor = rowConstructor;
         this.type = null;

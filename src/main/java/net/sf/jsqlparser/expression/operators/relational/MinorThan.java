@@ -22,7 +22,11 @@ public class MinorThan extends ComparisonOperator {
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public MinorThan withLeftExpression(Expression arg0) {
         return (MinorThan) super.withLeftExpression(arg0);

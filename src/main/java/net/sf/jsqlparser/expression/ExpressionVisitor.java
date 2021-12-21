@@ -27,7 +27,7 @@ public interface ExpressionVisitor {
 
     void visit(NullValue nullValue);
 
-    void visit(Function function);
+    Expression visit(Function function);
 
     void visit(SignedExpression signedExpression);
 
@@ -51,9 +51,9 @@ public interface ExpressionVisitor {
 
     void visit(StringValue stringValue);
 
-    void visit(Addition addition);
+    Expression visit(Addition addition);
 
-    void visit(Division division);
+    Expression visit(Division division);
 
     void visit(IntegerDivision division);
 

@@ -65,7 +65,7 @@ public class ExpressionDeParserTest {
         analyticExpression.setName("name");
         analyticExpression.setExpression(expression);
 
-        will(appendToBuffer("expression")).given(expression).accept(expressionDeParser);
+        will(appendToBuffer("expression")).given(expression).acceptAndReturn(expressionDeParser);
 
         expressionDeParser.visit(analyticExpression);
 
@@ -82,8 +82,8 @@ public class ExpressionDeParserTest {
         analyticExpression.setExpression(expression);
         analyticExpression.setOffset(offset);
 
-        will(appendToBuffer("expression")).given(expression).accept(expressionDeParser);
-        will(appendToBuffer("offset")).given(offset).accept(expressionDeParser);
+        will(appendToBuffer("expression")).given(expression).acceptAndReturn(expressionDeParser);
+        will(appendToBuffer("offset")).given(offset).acceptAndReturn(expressionDeParser);
 
         expressionDeParser.visit(analyticExpression);
 
@@ -102,9 +102,9 @@ public class ExpressionDeParserTest {
         analyticExpression.setOffset(offset);
         analyticExpression.setDefaultValue(defaultValue);
 
-        will(appendToBuffer("expression")).given(expression).accept(expressionDeParser);
-        will(appendToBuffer("offset")).given(offset).accept(expressionDeParser);
-        will(appendToBuffer("default value")).given(defaultValue).accept(expressionDeParser);
+        will(appendToBuffer("expression")).given(expression).acceptAndReturn(expressionDeParser);
+        will(appendToBuffer("offset")).given(offset).acceptAndReturn(expressionDeParser);
+        will(appendToBuffer("default value")).given(defaultValue).acceptAndReturn(expressionDeParser);
 
         expressionDeParser.visit(analyticExpression);
 
@@ -131,7 +131,7 @@ public class ExpressionDeParserTest {
         analyticExpression.setName("name");
         analyticExpression.setKeep(keep);
 
-        will(appendToBuffer("keep")).given(keep).accept(expressionDeParser);
+        will(appendToBuffer("keep")).given(keep).acceptAndReturn(expressionDeParser);
 
         expressionDeParser.visit(analyticExpression);
 
@@ -152,8 +152,8 @@ public class ExpressionDeParserTest {
         partitionExpressions.add(partitionExpression1);
         partitionExpressions.add(partitionExpression2);
 
-        will(appendToBuffer("partition expression 1")).given(partitionExpression1).accept(expressionDeParser);
-        will(appendToBuffer("partition expression 2")).given(partitionExpression2).accept(expressionDeParser);
+        will(appendToBuffer("partition expression 1")).given(partitionExpression1).acceptAndReturn(expressionDeParser);
+        will(appendToBuffer("partition expression 2")).given(partitionExpression2).acceptAndReturn(expressionDeParser);
 
         expressionDeParser.visit(analyticExpression);
 

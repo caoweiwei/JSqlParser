@@ -29,7 +29,11 @@ public class OracleHint extends ASTNodeAccessImpl implements Expression {
         return SINGLE_LINE.matcher(comment).find()
                 || MULTI_LINE.matcher(comment).find();
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public final void setComment(String comment) {
         Matcher m;
         m = SINGLE_LINE.matcher(comment);

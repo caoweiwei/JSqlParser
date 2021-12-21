@@ -22,7 +22,11 @@ public class GreaterThan extends ComparisonOperator {
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public GreaterThan withLeftExpression(Expression arg0) {
         return (GreaterThan) super.withLeftExpression(arg0);

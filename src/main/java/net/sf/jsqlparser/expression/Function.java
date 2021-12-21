@@ -286,4 +286,9 @@ public class Function extends ASTNodeAccessImpl implements Expression {
     public <E extends Expression> E getAttribute(Class<E> type) {
         return type.cast(getAttribute());
     }
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        return expressionVisitor.visit(this);
+    }
 }

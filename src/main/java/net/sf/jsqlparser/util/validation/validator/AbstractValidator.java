@@ -137,20 +137,20 @@ public abstract class AbstractValidator<S> implements Validator<S> {
         if (multiExprList != null) {
             ExpressionValidator v = getValidator(ExpressionValidator.class);
             multiExprList.getExpressionLists().stream().map(ExpressionList::getExpressions).flatMap(List::stream)
-            .forEach(e -> e.accept(v));
+            .forEach(e -> e.acceptAndReturn(v));
         }
     }
 
     protected void validateOptionalExpression(Expression expression) {
-        validateOptional(expression, e -> e.accept(getValidator(ExpressionValidator.class)));
+        validateOptional(expression, e -> e.acceptAndReturn(getValidator(ExpressionValidator.class)));
     }
 
     protected void validateOptionalExpression(Expression expression, ExpressionValidator v) {
-        validateOptional(expression, e -> e.accept(v));
+        validateOptional(expression, e -> e.acceptAndReturn(v));
     }
 
     protected void validateOptionalExpressions(List<? extends Expression> expressions) {
-        validateOptionalList(expressions, () -> getValidator(ExpressionValidator.class), (o, v) -> o.accept(v));
+        validateOptionalList(expressions, () -> getValidator(ExpressionValidator.class), (o, v) -> o.acceptAndReturn(v));
     }
 
     protected void validateOptionalFromItems(FromItem... fromItems) {

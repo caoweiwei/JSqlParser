@@ -166,11 +166,12 @@ public class SelectDeParser extends AbstractDeParser<PlainSelect>
 
         if (plainSelect.getWhere() != null) {
             buffer.append(" WHERE ");
-            plainSelect.getWhere().accept(expressionVisitor);
+            plainSelect.setWhere(plainSelect.getWhere().acceptAndReturn(expressionVisitor));
+
         }
 
         if (plainSelect.getOracleHierarchical() != null) {
-            plainSelect.getOracleHierarchical().accept(expressionVisitor);
+            plainSelect.getOracleHierarchical().acceptAndReturn(expressionVisitor);
         }
 
         if (plainSelect.getGroupBy() != null) {
@@ -180,7 +181,8 @@ public class SelectDeParser extends AbstractDeParser<PlainSelect>
 
         if (plainSelect.getHaving() != null) {
             buffer.append(" HAVING ");
-            plainSelect.getHaving().accept(expressionVisitor);
+            plainSelect.setHaving(plainSelect.getHaving().acceptAndReturn(expressionVisitor));
+
         }
 
         if (plainSelect.getOrderByElements() != null) {
@@ -231,7 +233,7 @@ public class SelectDeParser extends AbstractDeParser<PlainSelect>
 
     @Override
     public void visit(SelectExpressionItem selectExpressionItem) {
-        selectExpressionItem.getExpression().accept(expressionVisitor);
+        selectExpressionItem.setExpression(selectExpressionItem.getExpression().acceptAndReturn(expressionVisitor));
         if (selectExpressionItem.getAlias() != null) {
             buffer.append(selectExpressionItem.getAlias().toString());
         }
@@ -436,7 +438,7 @@ public class SelectDeParser extends AbstractDeParser<PlainSelect>
         }
         for (Expression onExpression : join.getOnExpressions()) {
             buffer.append(" ON ");
-            onExpression.accept(expressionVisitor);
+            onExpression = onExpression.acceptAndReturn(expressionVisitor);
         }
         if (join.getUsingColumns().size()>0) {
             buffer.append(" USING (");

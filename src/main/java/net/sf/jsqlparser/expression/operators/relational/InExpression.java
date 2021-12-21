@@ -11,9 +11,10 @@ package net.sf.jsqlparser.expression.operators.relational;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class InExpression extends ASTNodeAccessImpl implements Expression, SupportsOldOracleJoinSyntax {
+public class InExpression extends ASTNodeAccessImpl implements Expression, ReturnExpression, SupportsOldOracleJoinSyntax {
 
     private Expression leftExpression;
     private ItemsList rightItemsList;
@@ -23,7 +24,11 @@ public class InExpression extends ASTNodeAccessImpl implements Expression, Suppo
 
     public InExpression() {
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public InExpression(Expression leftExpression, ItemsList itemsList) {
         setLeftExpression(leftExpression);
         setRightItemsList(itemsList);

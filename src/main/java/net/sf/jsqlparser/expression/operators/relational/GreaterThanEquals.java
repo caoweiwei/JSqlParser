@@ -17,7 +17,11 @@ public class GreaterThanEquals extends ComparisonOperator {
     public GreaterThanEquals() {
         super(">=");
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public GreaterThanEquals(String operator) {
         super(operator);
     }

@@ -26,7 +26,11 @@ public class LikeExpression extends BinaryExpression {
     public void setNot(boolean b) {
         not = b;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

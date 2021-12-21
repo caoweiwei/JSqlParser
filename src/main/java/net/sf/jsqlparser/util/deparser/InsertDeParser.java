@@ -103,12 +103,12 @@ public class InsertDeParser extends AbstractDeParser<Insert> implements ItemsLis
             buffer.append(" SET ");
             for (int i = 0; i < insert.getSetColumns().size(); i++) {
                 Column column = insert.getSetColumns().get(i);
-                column.accept(expressionVisitor);
+                column.acceptAndReturn(expressionVisitor);
 
                 buffer.append(" = ");
 
                 Expression expression = insert.getSetExpressionList().get(i);
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (i < insert.getSetColumns().size() - 1) {
                     buffer.append(", ");
                 }
@@ -122,7 +122,7 @@ public class InsertDeParser extends AbstractDeParser<Insert> implements ItemsLis
                 buffer.append(column.getFullyQualifiedName()).append(" = ");
 
                 Expression expression = insert.getDuplicateUpdateExpressionList().get(i);
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (i < insert.getDuplicateUpdateColumns().size() - 1) {
                     buffer.append(", ");
                 }
@@ -148,7 +148,7 @@ public class InsertDeParser extends AbstractDeParser<Insert> implements ItemsLis
         buffer.append(" VALUES (");
         for (Iterator<Expression> iter = expressionList.getExpressions().iterator(); iter.hasNext();) {
             Expression expression = iter.next();
-            expression.accept(expressionVisitor);
+            expression.acceptAndReturn(expressionVisitor);
             if (iter.hasNext()) {
                 buffer.append(", ");
             }
@@ -168,7 +168,7 @@ public class InsertDeParser extends AbstractDeParser<Insert> implements ItemsLis
             buffer.append("(");
             for (Iterator<Expression> iter = it.next().getExpressions().iterator(); iter.hasNext();) {
                 Expression expression = iter.next();
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (iter.hasNext()) {
                     buffer.append(", ");
                 }

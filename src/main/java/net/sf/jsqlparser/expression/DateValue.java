@@ -16,7 +16,7 @@ import java.sql.Date;
 /**
  * A Date in the form {d 'yyyy-mm-dd'}
  */
-public class DateValue extends ASTNodeAccessImpl implements Expression {
+public class DateValue extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private Date value;
 
@@ -40,6 +40,11 @@ public class DateValue extends ASTNodeAccessImpl implements Expression {
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 
     public Date getValue() {

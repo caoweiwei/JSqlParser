@@ -28,7 +28,7 @@ public class DeclareStatementDeParser extends AbstractDeParser<DeclareStatement>
         buffer.append("DECLARE ");
 
         if (declare.getUserVariable() != null) {
-            declare.getUserVariable().accept(expressionVisitor);
+            declare.getUserVariable().acceptAndReturn(expressionVisitor);
         }
 
         if (declare.getType() == DeclareType.AS) {
@@ -54,13 +54,13 @@ public class DeclareStatementDeParser extends AbstractDeParser<DeclareStatement>
                     }
                     DeclareStatement.TypeDefExpr type = declare.getTypeDefinitions().get(i);
                     if (type.userVariable != null) {
-                        type.userVariable.accept(expressionVisitor);
+                        type.userVariable.acceptAndReturn(expressionVisitor);
                         buffer.append(" ");
                     }
                     buffer.append(type.colDataType.toString());
                     if (type.defaultExpr != null) {
                         buffer.append(" = ");
-                        type.defaultExpr.accept(expressionVisitor);
+                        type.defaultExpr.acceptAndReturn(expressionVisitor);
                     }
                 }
             }

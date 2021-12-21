@@ -23,7 +23,11 @@ public class NotExpression extends ASTNodeAccessImpl implements Expression {
     public NotExpression() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public NotExpression(Expression expression) {
         this(expression, false);
     }

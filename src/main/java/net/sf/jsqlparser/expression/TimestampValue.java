@@ -26,7 +26,11 @@ public final class TimestampValue extends ASTNodeAccessImpl implements Expressio
     public TimestampValue() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public TimestampValue(String value) {
     //        if (value == null) {
     //            throw new IllegalArgumentException("null string");

@@ -20,7 +20,11 @@ public class XMLSerializeExpr extends ASTNodeAccessImpl implements Expression {
     private Expression expression;
     private List<OrderByElement> orderByElements;
     private ColDataType dataType;
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

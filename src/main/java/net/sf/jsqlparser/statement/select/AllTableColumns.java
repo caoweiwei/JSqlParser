@@ -11,10 +11,11 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 import net.sf.jsqlparser.schema.*;
 
-public class AllTableColumns extends ASTNodeAccessImpl implements SelectItem, Expression {
+public class AllTableColumns extends ASTNodeAccessImpl implements SelectItem, Expression, ReturnExpression {
 
     private Table table;
 
@@ -24,7 +25,11 @@ public class AllTableColumns extends ASTNodeAccessImpl implements SelectItem, Ex
     public AllTableColumns(Table tableName) {
         this.table = tableName;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public Table getTable() {
         return table;
     }

@@ -11,7 +11,7 @@ package net.sf.jsqlparser.expression;
 
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class ArrayExpression extends ASTNodeAccessImpl implements Expression {
+public class ArrayExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private Expression objExpression;
     private Expression indexExpression;
@@ -102,5 +102,10 @@ public class ArrayExpression extends ASTNodeAccessImpl implements Expression {
 
     public <E extends Expression> E getIndexExpression(Class<E> type) {
         return type.cast(getIndexExpression());
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 }

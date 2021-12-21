@@ -28,6 +28,11 @@ public class JsonFunction extends ASTNodeAccessImpl implements Expression {
   public ArrayList<JsonKeyValuePair> getKeyValuePairs() {
     return keyValuePairs;
   }
+  @Override
+  public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+    expressionVisitor.visit(this);
+    return this;
+  }
 
   public ArrayList<JsonFunctionExpression> getExpressions() {
     return expressions;

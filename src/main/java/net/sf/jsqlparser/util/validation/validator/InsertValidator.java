@@ -46,8 +46,8 @@ public class InsertValidator extends AbstractValidator<Insert> {
             // TODO is this useful?
             // validateModelCondition (insert.getSetColumns().size() !=
             // insert.getSetExpressionList().size(), "model-error");
-            insert.getSetColumns().forEach(c -> c.accept(v));
-            insert.getSetExpressionList().forEach(c -> c.accept(v));
+            insert.getSetColumns().forEach(c -> c.acceptAndReturn(v));
+            insert.getSetExpressionList().forEach(c -> c.acceptAndReturn(v));
         }
 
         if (insert.isUseDuplicate()) {
@@ -55,13 +55,13 @@ public class InsertValidator extends AbstractValidator<Insert> {
             // TODO is this useful?
             // validateModelCondition (insert.getDuplicateUpdateColumns().size() !=
             // insert.getDuplicateUpdateExpressionList().size(), "model-error");
-            insert.getDuplicateUpdateColumns().forEach(c -> c.accept(v));
-            insert.getDuplicateUpdateExpressionList().forEach(c -> c.accept(v));
+            insert.getDuplicateUpdateColumns().forEach(c -> c.acceptAndReturn(v));
+            insert.getDuplicateUpdateExpressionList().forEach(c -> c.acceptAndReturn(v));
         }
 
         if (isNotEmpty(insert.getReturningExpressionList())) {
             ExpressionValidator v = getValidator(ExpressionValidator.class);
-            insert.getReturningExpressionList().forEach(c -> c.getExpression().accept(v));
+            insert.getReturningExpressionList().forEach(c -> c.getExpression().acceptAndReturn(v));
         }
     }
 

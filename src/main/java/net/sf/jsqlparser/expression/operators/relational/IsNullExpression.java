@@ -11,6 +11,7 @@ package net.sf.jsqlparser.expression.operators.relational;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
 public class IsNullExpression extends ASTNodeAccessImpl implements Expression {
@@ -26,7 +27,11 @@ public class IsNullExpression extends ASTNodeAccessImpl implements Expression {
     public boolean isNot() {
         return not;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public void setLeftExpression(Expression expression) {
         leftExpression = expression;
     }

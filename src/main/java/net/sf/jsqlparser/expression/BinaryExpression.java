@@ -15,7 +15,7 @@ import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
  * A basic class for binary expressions, that is expressions having a left member and a right member
  * which are in turn expressions.
  */
-public abstract class BinaryExpression extends ASTNodeAccessImpl implements Expression {
+public abstract class BinaryExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private Expression leftExpression;
     private Expression rightExpression;

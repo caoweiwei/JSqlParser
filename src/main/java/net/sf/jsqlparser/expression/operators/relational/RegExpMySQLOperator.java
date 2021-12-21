@@ -23,7 +23,11 @@ public class RegExpMySQLOperator extends BinaryExpression {
     public RegExpMySQLOperator(RegExpMatchOperatorType operatorType) {
         this(false, operatorType); 
     }
-    
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public RegExpMySQLOperator(boolean not, RegExpMatchOperatorType operatorType) {
         this.operatorType = Objects.requireNonNull(operatorType, "The provided RegExpMatchOperatorType must not be NULL.");
         this.not = not;

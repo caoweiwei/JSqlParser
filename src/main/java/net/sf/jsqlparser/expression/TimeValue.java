@@ -23,7 +23,11 @@ public class TimeValue extends ASTNodeAccessImpl implements Expression {
     public TimeValue() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public TimeValue(String value) {
         this.value = Time.valueOf(value.substring(1, value.length() - 1));
     }

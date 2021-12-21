@@ -50,7 +50,7 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     }
 
     @Override
-    public void visit(Function function) {
+    public Expression visit(Function function) {
         if (function.getParameters() != null) {
             function.getParameters().accept(this);
         }
@@ -59,14 +59,17 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
         }
         if (function.getOrderByElements() != null) {
             for (OrderByElement orderByElement : function.getOrderByElements()) {
-                orderByElement.getExpression().accept(this);
+
+                orderByElement.setExpression(orderByElement.getExpression().acceptAndReturn(this));
             }
         }
+        return function;
     }
 
     @Override
     public void visit(SignedExpression expr) {
-        expr.getExpression().accept(this);
+        expr.setExpression(expr.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -106,7 +109,8 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(Parenthesis parenthesis) {
-        parenthesis.getExpression().accept(this);
+        parenthesis.setExpression(parenthesis.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -115,13 +119,15 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     }
 
     @Override
-    public void visit(Addition expr) {
+    public Expression visit(Addition expr) {
         visitBinaryExpression(expr);
+        return expr;
     }
 
     @Override
-    public void visit(Division expr) {
+    public Expression visit(Division expr) {
         visitBinaryExpression(expr);
+        return expr;
     }
 
     @Override
@@ -156,9 +162,9 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(Between expr) {
-        expr.getLeftExpression().accept(this);
-        expr.getBetweenExpressionStart().accept(this);
-        expr.getBetweenExpressionEnd().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
+        expr.setBetweenExpressionEnd(expr.getBetweenExpressionStart().acceptAndReturn(this));
+        expr.setBetweenExpressionEnd(expr.getBetweenExpressionEnd().acceptAndReturn(this));
     }
 
     @Override
@@ -179,10 +185,10 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(InExpression expr) {
         if (expr.getLeftExpression() != null) {
-            expr.getLeftExpression().accept(this);
+            expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
         }
         if (expr.getRightExpression() != null) {
-            expr.getRightExpression().accept(this);
+            expr.setRightExpression(expr.getRightExpression().acceptAndReturn(this));
         } else if (expr.getRightItemsList() != null) {
             expr.getRightItemsList().accept(this);
         }
@@ -190,19 +196,20 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(IsNullExpression expr) {
-        expr.getLeftExpression().accept(this);
+
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
     }
 
     @Override
     public void visit(FullTextSearch expr) {
         for (Column col : expr.getMatchColumns()) {
-            col.accept(this);
+            col.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(IsBooleanExpression expr) {
-        expr.getLeftExpression().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
     }
 
     @Override
@@ -248,25 +255,26 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(CaseExpression expr) {
         if (expr.getSwitchExpression() != null) {
-            expr.getSwitchExpression().accept(this);
+            expr.setSwitchExpression(expr.getSwitchExpression().acceptAndReturn(this));
         }
         for (Expression x : expr.getWhenClauses()) {
-            x.accept(this);
+            x.acceptAndReturn(this);
         }
         if (expr.getElseExpression() != null) {
-            expr.getElseExpression().accept(this);
+            expr.setElseExpression(expr.getElseExpression().acceptAndReturn(this));
+
         }
     }
 
     @Override
     public void visit(WhenClause expr) {
-        expr.getWhenExpression().accept(this);
-        expr.getThenExpression().accept(this);
+        expr.setWhenExpression(expr.getWhenExpression().acceptAndReturn(this));
+        expr.setThenExpression(expr.getThenExpression().acceptAndReturn(this));
     }
 
     @Override
     public void visit(ExistsExpression expr) {
-        expr.getRightExpression().accept(this);
+        expr.setRightExpression(expr.getRightExpression().acceptAndReturn(this));
     }
    
     @Override
@@ -301,12 +309,13 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(CastExpression expr) {
-        expr.getLeftExpression().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(TryCastExpression expr) {
-        expr.getLeftExpression().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
     }
 
     @Override
@@ -317,31 +326,31 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(AnalyticExpression expr) {
         if (expr.getExpression() != null) {
-            expr.getExpression().accept(this);
+            expr.getExpression().acceptAndReturn(this);
         }
         if (expr.getDefaultValue() != null) {
-            expr.getDefaultValue().accept(this);
+            expr.getDefaultValue().acceptAndReturn(this);
         }
         if (expr.getOffset() != null) {
-            expr.getOffset().accept(this);
+            expr.getOffset().acceptAndReturn(this);
         }
         if (expr.getKeep() != null) {
-            expr.getKeep().accept(this);
+            expr.getKeep().acceptAndReturn(this);
         }
         for (OrderByElement element : expr.getOrderByElements()) {
-            element.getExpression().accept(this);
+            element.getExpression().acceptAndReturn(this);
         }
 
         if (expr.getWindowElement() != null) {
-            expr.getWindowElement().getRange().getStart().getExpression().accept(this);
-            expr.getWindowElement().getRange().getEnd().getExpression().accept(this);
-            expr.getWindowElement().getOffset().getExpression().accept(this);
+            expr.getWindowElement().getRange().getStart().getExpression().acceptAndReturn(this);
+            expr.getWindowElement().getRange().getEnd().getExpression().acceptAndReturn(this);
+            expr.getWindowElement().getOffset().getExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(ExtractExpression expr) {
-        expr.getExpression().accept(this);
+        expr.getExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -350,8 +359,8 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(OracleHierarchicalExpression expr) {
-        expr.getConnectExpression().accept(this);
-        expr.getStartExpression().accept(this);
+        expr.getConnectExpression().acceptAndReturn(this);
+        expr.getStartExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -362,14 +371,14 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(ExpressionList expressionList) {
         for (Expression expr : expressionList.getExpressions()) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(NamedExpressionList namedExpressionList) {
         for (Expression expr : namedExpressionList.getExpressions()) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
     }
 
@@ -382,7 +391,8 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(NotExpression notExpr) {
-        notExpr.getExpression().accept(this);
+        notExpr.setExpression(notExpr.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -396,13 +406,13 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     }
 
     protected void visitBinaryExpression(BinaryExpression expr) {
-        expr.getLeftExpression().accept(this);
-        expr.getRightExpression().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
+        expr.setRightExpression(expr.getRightExpression().acceptAndReturn(this));
     }
 
     @Override
     public void visit(JsonExpression jsonExpr) {
-        jsonExpr.getExpression().accept(this);
+        jsonExpr.getExpression().acceptAndReturn(this);
     }
 
     @Override
@@ -428,18 +438,20 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(KeepExpression expr) {
         for (OrderByElement element : expr.getOrderByElements()) {
-            element.getExpression().accept(this);
+            element.setExpression(element.getExpression().acceptAndReturn(this));
+
         }
     }
 
     @Override
     public void visit(MySQLGroupConcat groupConcat) {
         for (Expression expr : groupConcat.getExpressionList().getExpressions()) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
         if (groupConcat.getOrderByElements() != null) {
             for (OrderByElement element : groupConcat.getOrderByElements()) {
-                element.getExpression().accept(this);
+                element.setExpression(element.getExpression().acceptAndReturn(this));
+
             }
         }
     }
@@ -447,17 +459,17 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(ValueListExpression valueListExpression) {
         for (Expression expr : valueListExpression.getExpressionList().getExpressions()) {
-            expr.accept(this);
+            expr = expr.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(Pivot pivot) {
         for (FunctionItem item : pivot.getFunctionItems()) {
-            item.getFunction().accept(this);
+            item.getFunction().acceptAndReturn(this);
         }
         for (Column col : pivot.getForColumns()) {
-            col.accept(this);
+            col.acceptAndReturn(this);
         }
         if (pivot.getSingleInItems() != null) {
             for (SelectExpressionItem item : pivot.getSingleInItems()) {
@@ -475,10 +487,10 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(PivotXml pivot) {
         for (FunctionItem item : pivot.getFunctionItems()) {
-            item.getFunction().accept(this);
+            item.getFunction().acceptAndReturn(this);
         }
         for (Column col : pivot.getForColumns()) {
-            col.accept(this);
+            col.acceptAndReturn(this);
         }
         if (pivot.getInSelect() != null && selectVisitor != null) {
             pivot.getInSelect().accept(selectVisitor);
@@ -492,12 +504,12 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(AllColumns allColumns) {
-        allColumns.accept((ExpressionVisitor) this);
+        allColumns.acceptAndReturn((ExpressionVisitor) this);
     }
 
     @Override
     public void visit(AllTableColumns allTableColumns) {
-        allTableColumns.accept((ExpressionVisitor) this);
+        allTableColumns.acceptAndReturn((ExpressionVisitor) this);
     }
 
     @Override
@@ -506,14 +518,15 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(SelectExpressionItem selectExpressionItem) {
-        selectExpressionItem.getExpression().accept(this);
+        selectExpressionItem.setExpression(selectExpressionItem.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(RowConstructor rowConstructor) {
         if (rowConstructor.getColumnDefinitions().isEmpty()) {
             for (Expression expression: rowConstructor.getExprList().getExpressions()) {
-                expression.accept(this);
+                expression = expression.acceptAndReturn(this);
               }
         } else {
             for (ColumnDefinition columnDefinition : rowConstructor.getColumnDefinitions()) {
@@ -524,7 +537,7 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(RowGetExpression rowGetExpression) {
-        rowGetExpression.getExpression().accept(this);
+        rowGetExpression.setExpression(rowGetExpression.getExpression().acceptAndReturn(this));
     }
 
     @Override
@@ -552,7 +565,8 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(CollateExpression col) {
-        col.getLeftExpression().accept(this);
+        col.setLeftExpression(col.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
@@ -562,72 +576,74 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(ArrayExpression array) {
-        array.getObjExpression().accept(this);
+        array.getObjExpression().acceptAndReturn(this);
         if (array.getIndexExpression() != null) {
-            array.getIndexExpression().accept(this);
+            array.getIndexExpression().acceptAndReturn(this);
         }
         if (array.getStartIndexExpression() != null) {
-            array.getStartIndexExpression().accept(this);
+            array.getStartIndexExpression().acceptAndReturn(this);
         }
         if (array.getStopIndexExpression() != null) {
-            array.getStopIndexExpression().accept(this);
+            array.getStopIndexExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(ArrayConstructor aThis) {
         for (Expression expression : aThis.getExpressions()) {
-            expression.accept(this);
+            expression = expression.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(VariableAssignment var) {
-        var.getVariable().accept(this);
-        var.getExpression().accept(this);
+        var.getVariable().acceptAndReturn(this);
+        var.setExpression(var.getExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(XMLSerializeExpr expr) {
-        expr.getExpression().accept(this);
+        expr.getExpression().acceptAndReturn(this);
         for (OrderByElement elm : expr.getOrderByElements()) {
-            elm.getExpression().accept(this);
+            elm.getExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(TimezoneExpression expr) {
-        expr.getLeftExpression().accept(this);
+        expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
+
     }
 
     @Override
     public void visit(JsonAggregateFunction expression) {
         Expression expr = expression.getExpression();
         if (expr!=null) {
-            expr.accept(this);
+            expr.acceptAndReturn(this);
         }
         
         expr = expression.getFilterExpression();
         if (expr!=null) {
-            expr.accept(this);
+            expr.acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(JsonFunction expression) {
         for (JsonFunctionExpression expr: expression.getExpressions()) {
-            expr.getExpression().accept(this);
+            expr.getExpression().acceptAndReturn(this);
         }
     }
 
     @Override
     public void visit(ConnectByRootOperator connectByRootOperator) {
-        connectByRootOperator.getColumn().accept(this);
+        connectByRootOperator.getColumn().acceptAndReturn(this);
     }
     
     @Override
     public void visit(OracleNamedFunctionParameter oracleNamedFunctionParameter) {
-        oracleNamedFunctionParameter.getExpression().accept(this);
+        oracleNamedFunctionParameter.getExpression().acceptAndReturn(this);
     }
     
     public void visit(ColumnDefinition columnDefinition) {

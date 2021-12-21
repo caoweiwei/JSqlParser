@@ -67,6 +67,6 @@ public class LimitExpressionTest {
         plainSelect = (PlainSelect) select.getSelectBody();
 
         AllValue allValue = plainSelect.getLimit().getRowCount(AllValue.class);
-        allValue.accept(new ExpressionVisitorAdapter());
+        allValue.acceptAndReturn(new ExpressionVisitorAdapter());
     }
 }

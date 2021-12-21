@@ -11,7 +11,7 @@ package net.sf.jsqlparser.expression;
 
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class DateTimeLiteralExpression extends ASTNodeAccessImpl implements Expression {
+public class DateTimeLiteralExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private String value;
     private DateTime type;
@@ -32,6 +32,11 @@ public class DateTimeLiteralExpression extends ASTNodeAccessImpl implements Expr
         this.type = type;
     }
 
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

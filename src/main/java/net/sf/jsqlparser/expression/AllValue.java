@@ -11,7 +11,7 @@ package net.sf.jsqlparser.expression;
 
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class AllValue extends ASTNodeAccessImpl implements Expression {
+public class AllValue extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
@@ -21,5 +21,11 @@ public class AllValue extends ASTNodeAccessImpl implements Expression {
     @Override
     public String toString() {
         return "ALL";
+    }
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 }

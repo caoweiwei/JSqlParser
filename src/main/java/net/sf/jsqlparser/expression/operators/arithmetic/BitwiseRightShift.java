@@ -19,7 +19,11 @@ public class BitwiseRightShift extends BinaryExpression {
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public String getStringExpression() {
         return ">>";

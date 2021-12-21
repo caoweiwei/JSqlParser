@@ -50,7 +50,8 @@ public class OrderByDeParser extends AbstractDeParser<List<OrderByElement>> {
     }
 
     public void deParseElement(OrderByElement orderBy) {
-        orderBy.getExpression().accept(expressionVisitor);
+        orderBy.setExpression(orderBy.getExpression().acceptAndReturn(expressionVisitor));
+
         if (!orderBy.isAsc()) {
             buffer.append(" DESC");
         } else if (orderBy.isAscDescPresent()) {

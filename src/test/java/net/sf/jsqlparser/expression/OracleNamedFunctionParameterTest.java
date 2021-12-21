@@ -67,7 +67,7 @@ public class OracleNamedFunctionParameterTest {
         CCJSqlParserUtil.parse(sqlStr).accept(new StatementVisitorAdapter());
 
         // alternatively, for the Expression only
-        CCJSqlParserUtil.parseExpression("p_1 => r.param1").accept(new ExpressionVisitorAdapter());
+        CCJSqlParserUtil.parseExpression("p_1 => r.param1").acceptAndReturn(new ExpressionVisitorAdapter());
     }
 
     /**

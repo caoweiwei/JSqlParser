@@ -41,7 +41,8 @@ public class GroupByDeParser extends AbstractDeParser<GroupByElement> {
         List<Expression> expressions = groupBy.getGroupByExpressionList().getExpressions();
         if (expressions != null) {
             for (Iterator<Expression> iter = expressions.iterator(); iter.hasNext();) {
-                iter.next().accept(expressionVisitor);
+                Expression expression = iter.next();
+                expression = expression.acceptAndReturn(expressionVisitor);
                 if (iter.hasNext()) {
                     buffer.append(", ");
                 }

@@ -28,7 +28,11 @@ public class EqualsTo extends ComparisonOperator {
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public EqualsTo withLeftExpression(Expression expression) {
         return (EqualsTo) super.withLeftExpression(expression);

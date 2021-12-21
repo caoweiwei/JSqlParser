@@ -66,7 +66,7 @@ public class ReplaceDeParser extends AbstractDeParser<Replace> implements ItemsL
                 buffer.append(column.getFullyQualifiedName()).append("=");
 
                 Expression expression = replace.getExpressions().get(i);
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (i < replace.getColumns().size() - 1) {
                     buffer.append(", ");
                 }
@@ -86,7 +86,7 @@ public class ReplaceDeParser extends AbstractDeParser<Replace> implements ItemsL
         buffer.append("VALUES (");
         for (Iterator<Expression> iter = expressionList.getExpressions().iterator(); iter.hasNext();) {
             Expression expression = iter.next();
-            expression.accept(expressionVisitor);
+            expression.acceptAndReturn(expressionVisitor);
             if (iter.hasNext()) {
                 buffer.append(", ");
             }
@@ -127,7 +127,7 @@ public class ReplaceDeParser extends AbstractDeParser<Replace> implements ItemsL
             buffer.append("(");
             for (Iterator<Expression> iter = it.next().getExpressions().iterator(); iter.hasNext();) {
                 Expression expression = iter.next();
-                expression.accept(expressionVisitor);
+                expression.acceptAndReturn(expressionVisitor);
                 if (iter.hasNext()) {
                     buffer.append(", ");
                 }

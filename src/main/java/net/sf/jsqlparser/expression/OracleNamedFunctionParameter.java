@@ -28,7 +28,11 @@ public class OracleNamedFunctionParameter extends ASTNodeAccessImpl implements E
     public String getName() {
         return name;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public Expression getExpression() {
         return expression;
     }

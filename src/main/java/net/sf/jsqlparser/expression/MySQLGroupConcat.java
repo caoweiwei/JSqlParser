@@ -29,6 +29,11 @@ public class MySQLGroupConcat extends ASTNodeAccessImpl implements Expression {
     public ExpressionList getExpressionList() {
         return expressionList;
     }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
 
     public void setExpressionList(ExpressionList expressionList) {
         this.expressionList = expressionList;

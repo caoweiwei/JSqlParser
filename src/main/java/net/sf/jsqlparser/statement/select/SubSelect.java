@@ -18,11 +18,12 @@ import java.util.Optional;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitor;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class SubSelect extends ASTNodeAccessImpl implements FromItem, Expression, ItemsList {
+public class SubSelect extends ASTNodeAccessImpl implements FromItem, Expression, ReturnExpression,ItemsList {
 
     private SelectBody selectBody;
     private Alias alias;
@@ -49,7 +50,11 @@ public class SubSelect extends ASTNodeAccessImpl implements FromItem, Expression
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public Alias getAlias() {
         return alias;

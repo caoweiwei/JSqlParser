@@ -12,19 +12,24 @@ package net.sf.jsqlparser.schema;
 import java.util.List;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
 /**
  * A column. It can have the table name it belongs to.
  */
-public class Column extends ASTNodeAccessImpl implements Expression, MultiPartName {
+public class Column extends ASTNodeAccessImpl implements Expression, ReturnExpression, MultiPartName {
 
     private Table table;
     private String columnName;
 
     public Column() {
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public Column(Table table, String columnName) {
         setTable(table);
         setColumnName(columnName);

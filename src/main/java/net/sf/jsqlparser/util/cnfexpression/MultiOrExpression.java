@@ -12,6 +12,7 @@ package net.sf.jsqlparser.util.cnfexpression;
 import java.util.List;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ExpressionVisitor;
 
 public final class MultiOrExpression extends MultipleExpression {
 
@@ -24,4 +25,9 @@ public final class MultiOrExpression extends MultipleExpression {
         return "OR";
     }
 
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+         return null;
+    }
 }

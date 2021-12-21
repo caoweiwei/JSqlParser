@@ -20,7 +20,11 @@ public class JsonExpression extends ASTNodeAccessImpl implements Expression {
 
     private List<String> idents = new ArrayList<String>();
     private List<String> operators = new ArrayList<String>();
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

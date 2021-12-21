@@ -81,7 +81,7 @@ public class DeleteDeParser extends AbstractDeParser<Delete> {
 
         if (delete.getWhere() != null) {
             buffer.append(" WHERE ");
-            delete.getWhere().accept(expressionVisitor);
+            delete.getWhere().acceptAndReturn(expressionVisitor);
         }
 
         if (delete.getOrderByElements() != null) {

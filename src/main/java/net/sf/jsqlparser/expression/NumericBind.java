@@ -18,7 +18,11 @@ public class NumericBind extends ASTNodeAccessImpl implements Expression {
     public int getBindId() {
         return bindId;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public void setBindId(int bindId) {
         this.bindId = bindId;
     }

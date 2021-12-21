@@ -14,7 +14,7 @@ import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 /**
  * Every number with a point or a exponential format is a DoubleValue
  */
-public class DoubleValue extends ASTNodeAccessImpl implements Expression {
+public class DoubleValue extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private double value;
     private String stringValue;
@@ -35,6 +35,11 @@ public class DoubleValue extends ASTNodeAccessImpl implements Expression {
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 
     public double getValue() {

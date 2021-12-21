@@ -134,7 +134,8 @@ implements SelectVisitor, SelectItemVisitor, FromItemVisitor, PivotVisitor {
 
     @Override
     public void visit(SelectExpressionItem selectExpressionItem) {
-        selectExpressionItem.getExpression().accept(getValidator(ExpressionValidator.class));
+        selectExpressionItem.setExpression(selectExpressionItem.getExpression().acceptAndReturn(getValidator(ExpressionValidator.class)));
+
     }
 
     @Override
@@ -184,7 +185,7 @@ implements SelectVisitor, SelectItemVisitor, FromItemVisitor, PivotVisitor {
         validateOptionalExpressions(pivot.getForColumns());
         if (isNotEmpty(pivot.getFunctionItems())) {
             ExpressionValidator v = getValidator(ExpressionValidator.class);
-            pivot.getFunctionItems().forEach(f -> f.getFunction().accept(v));
+            pivot.getFunctionItems().forEach(f -> f.getFunction().acceptAndReturn(v));
         }
         if (pivot.getInSelect() != null) {
             pivot.getInSelect().accept(this);

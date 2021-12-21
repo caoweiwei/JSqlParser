@@ -57,6 +57,11 @@ public class IntervalExpression extends ASTNodeAccessImpl implements Expression 
                 + Objects.toString(expression, parameter)
                 + (intervalType != null ? " " + intervalType : "");
     }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
 
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {

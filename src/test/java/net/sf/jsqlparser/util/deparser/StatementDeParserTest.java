@@ -78,9 +78,9 @@ public class StatementDeParserTest {
 
         statementDeParser.visit(delete);
 
-        then(where).should().accept(expressionDeParser);
-        then(orderByElement1Expression).should().accept(expressionDeParser);
-        then(orderByElement2Expression).should().accept(expressionDeParser);
+        then(where).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement1Expression).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement2Expression).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test
@@ -124,8 +124,8 @@ public class StatementDeParserTest {
         then(withItem1).should().accept(selectDeParser);
         then(withItem2).should().accept(selectDeParser);
         then(selectBody).should().accept(selectDeParser);
-        then(duplicateUpdateExpression1).should().accept(expressionDeParser);
-        then(duplicateUpdateExpression1).should().accept(expressionDeParser);
+        then(duplicateUpdateExpression1).should().acceptAndReturn(expressionDeParser);
+        then(duplicateUpdateExpression1).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test
@@ -150,8 +150,8 @@ public class StatementDeParserTest {
 
         statementDeParser.visit(replace);
 
-        then(expression1).should().accept(expressionDeParser);
-        then(expression2).should().accept(expressionDeParser);
+        then(expression1).should().acceptAndReturn(expressionDeParser);
+        then(expression2).should().acceptAndReturn(expressionDeParser);
     }
 
 //    @Test
@@ -166,7 +166,7 @@ public class StatementDeParserTest {
 //
 //        statementDeParser.visit(replace);
 //
-//        then(itemsList).should().accept(argThat(is(replaceDeParserWithDeParsers(equalTo(expressionDeParser), equalTo(selectDeParser)))));
+//        then(itemsList).should().acceptAndReturn(argThat(is(replaceDeParserWithDeParsers(equalTo(expressionDeParser), equalTo(selectDeParser)))));
 //    }
     @Test
     @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
@@ -219,11 +219,11 @@ public class StatementDeParserTest {
 
         then(expressionDeParser).should().visit(column1);
         then(expressionDeParser).should().visit(column2);
-        then(expression1).should().accept(expressionDeParser);
-        then(expression2).should().accept(expressionDeParser);
-        then(where).should().accept(expressionDeParser);
-        then(orderByElement1Expression).should().accept(expressionDeParser);
-        then(orderByElement2Expression).should().accept(expressionDeParser);
+        then(expression1).should().acceptAndReturn(expressionDeParser);
+        then(expression2).should().acceptAndReturn(expressionDeParser);
+        then(where).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement1Expression).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement2Expression).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test
@@ -264,9 +264,9 @@ public class StatementDeParserTest {
         then(expressionDeParser).should().visit(column1);
         then(expressionDeParser).should().visit(column2);
         then(expressionDeParser).should().visit(subSelect);
-        then(where).should().accept(expressionDeParser);
-        then(orderByElement1Expression).should().accept(expressionDeParser);
-        then(orderByElement2Expression).should().accept(expressionDeParser);
+        then(where).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement1Expression).should().acceptAndReturn(expressionDeParser);
+        then(orderByElement2Expression).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test
@@ -285,8 +285,8 @@ public class StatementDeParserTest {
 
         statementDeParser.visit(execute);
 
-        then(expression1).should().accept(expressionDeParser);
-        then(expression2).should().accept(expressionDeParser);
+        then(expression1).should().acceptAndReturn(expressionDeParser);
+        then(expression2).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test
@@ -301,7 +301,7 @@ public class StatementDeParserTest {
 
         statementDeParser.visit(setStatement);
 
-        then(expression).should().accept(expressionDeParser);
+        then(expression).should().acceptAndReturn(expressionDeParser);
     }
 
 //    private Matcher<ReplaceDeParser> replaceDeParserWithDeParsers(final Matcher<ExpressionDeParser> expressionDeParserMatcher, final Matcher<SelectDeParser> selectDeParserMatcher) {
@@ -358,8 +358,8 @@ public class StatementDeParserTest {
         then(withItem1).should().accept(selectDeParser);
         then(withItem2).should().accept(selectDeParser);
         then(selectBody).should().accept(selectDeParser);
-        then(duplicateUpdateExpression1).should().accept(expressionDeParser);
-        then(duplicateUpdateExpression1).should().accept(expressionDeParser);
+        then(duplicateUpdateExpression1).should().acceptAndReturn(expressionDeParser);
+        then(duplicateUpdateExpression1).should().acceptAndReturn(expressionDeParser);
     }
 
     @Test

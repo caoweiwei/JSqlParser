@@ -38,7 +38,7 @@ public class ExecuteDeParser extends AbstractDeParser<Execute> {
                 if (i > 0) {
                     buffer.append(", ");
                 }
-                expressions.get(i).accept(expressionVisitor);
+                expressions.get(i).acceptAndReturn(expressionVisitor);
             }
         }
         if (execute.isParenthesis()) {

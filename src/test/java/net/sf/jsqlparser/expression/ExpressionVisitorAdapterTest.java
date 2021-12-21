@@ -38,7 +38,7 @@ public class ExpressionVisitorAdapterTest {
         Select select = (Select) CCJSqlParserUtil.parse("select * from foo where x in (?,?,?)");
         PlainSelect plainSelect = select.getSelectBody(PlainSelect.class);
         Expression where = plainSelect.getWhere();
-        where.accept(new ExpressionVisitorAdapter() {
+        where.acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(InExpression expr) {
@@ -59,7 +59,7 @@ public class ExpressionVisitorAdapterTest {
                 parse("select * from foo where (a,b) in (select a,b from foo2)");
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
-        where.accept(new ExpressionVisitorAdapter() {
+        where.acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(InExpression expr) {
@@ -80,7 +80,7 @@ public class ExpressionVisitorAdapterTest {
                 parse("SELECT * FROM table WHERE foo XOR bar");
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
-        where.accept(new ExpressionVisitorAdapter() {
+        where.acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(XorExpression expr) {
@@ -108,7 +108,7 @@ public class ExpressionVisitorAdapterTest {
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         final OracleHint[] holder = new OracleHint[1];
         assertNotNull(plainSelect.getOracleHint());
-        plainSelect.getOracleHint().accept(new ExpressionVisitorAdapter() {
+        plainSelect.getOracleHint().acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(OracleHint hint) {
@@ -129,7 +129,7 @@ public class ExpressionVisitorAdapterTest {
                 parse("select * from foo where bar < CURRENT_TIMESTAMP");
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
-        where.accept(new ExpressionVisitorAdapter() {
+        where.acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(Column column) {
@@ -149,7 +149,7 @@ public class ExpressionVisitorAdapterTest {
                 parse("select * from foo where bar < CURRENT_DATE");
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
-        where.accept(new ExpressionVisitorAdapter() {
+        where.acceptAndReturn(new ExpressionVisitorAdapter() {
 
             @Override
             public void visit(Column column) {
@@ -171,7 +171,7 @@ public class ExpressionVisitorAdapterTest {
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
         adapter.setSelectVisitor(new SelectVisitorAdapter());
         try {
-            where.accept(adapter);
+            where.acceptAndReturn(adapter);
         } catch (NullPointerException npe) {
             fail();
         }
@@ -181,35 +181,35 @@ public class ExpressionVisitorAdapterTest {
     public void testCaseWithoutElse() throws JSQLParserException {
         Expression expr = CCJSqlParserUtil.parseExpression("CASE WHEN 1 then 0 END");
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
-        expr.accept(adapter);
+        expr.acceptAndReturn(adapter);
     }
 
     @Test
     public void testCaseWithoutElse2() throws JSQLParserException {
         Expression expr = CCJSqlParserUtil.parseExpression("CASE WHEN 1 then 0 ELSE -1 END");
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
-        expr.accept(adapter);
+        expr.acceptAndReturn(adapter);
     }
 
     @Test
     public void testCaseWithoutElse3() throws JSQLParserException {
         Expression expr = CCJSqlParserUtil.parseExpression("CASE 3+4 WHEN 1 then 0 END");
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
-        expr.accept(adapter);
+        expr.acceptAndReturn(adapter);
     }
 
     @Test
     public void testAnalyticFunctionWithoutExpression502() throws JSQLParserException {
         Expression expr = CCJSqlParserUtil.parseExpression("row_number() over (order by c)");
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
-        expr.accept(adapter);
+        expr.acceptAndReturn(adapter);
     }
 
     @Test
     public void testAtTimeZoneExpression() throws JSQLParserException {
         Expression expr = CCJSqlParserUtil.parseExpression("DATE(date1 AT TIME ZONE 'UTC' AT TIME ZONE 'australia/sydney')");
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
-        expr.accept(adapter);
+        expr.acceptAndReturn(adapter);
     }
 
     @Test
@@ -217,10 +217,10 @@ public class ExpressionVisitorAdapterTest {
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
         CCJSqlParserUtil
                 .parseExpression("JSON_OBJECT( KEY foo VALUE bar, KEY foo VALUE bar)")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
         CCJSqlParserUtil
                 .parseExpression("JSON_ARRAY( (SELECT * from dual) )")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
     }
 
     @Test
@@ -228,10 +228,10 @@ public class ExpressionVisitorAdapterTest {
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
         CCJSqlParserUtil
                 .parseExpression("JSON_OBJECTAGG( KEY foo VALUE bar NULL ON NULL WITH UNIQUE KEYS ) FILTER( WHERE name = 'Raj' ) OVER( PARTITION BY name )")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
         CCJSqlParserUtil
                 .parseExpression("JSON_ARRAYAGG( a FORMAT JSON ABSENT ON NULL ) FILTER( WHERE name = 'Raj' ) OVER( PARTITION BY name )")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
     }
 
     @Test
@@ -239,7 +239,7 @@ public class ExpressionVisitorAdapterTest {
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
         CCJSqlParserUtil
                 .parseExpression("CONNECT_BY_ROOT last_name as name")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
     }
 
     @Test
@@ -247,6 +247,6 @@ public class ExpressionVisitorAdapterTest {
         ExpressionVisitorAdapter adapter = new ExpressionVisitorAdapter();
         CCJSqlParserUtil
                 .parseExpression("CAST(ROW(dataid, value, calcMark) AS ROW(datapointid CHAR, value CHAR, calcMark CHAR))")
-                .accept(adapter);
+                .acceptAndReturn(adapter);
     }
 }

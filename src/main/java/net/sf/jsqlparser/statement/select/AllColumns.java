@@ -11,15 +11,20 @@ package net.sf.jsqlparser.statement.select;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.ReturnExpression;
 import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
 
-public class AllColumns extends ASTNodeAccessImpl implements SelectItem, Expression {
+public class AllColumns extends ASTNodeAccessImpl implements SelectItem, Expression, ReturnExpression {
 
     @Override
     public void accept(SelectItemVisitor selectItemVisitor) {
         selectItemVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public String toString() {
         return "*";

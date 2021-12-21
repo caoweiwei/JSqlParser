@@ -33,7 +33,7 @@ import net.sf.jsqlparser.schema.Column;
  *
  * @author are
  */
-public class ConnectByRootOperator extends ASTNodeAccessImpl implements Expression {
+public class ConnectByRootOperator extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
     private final Column column;
 
     public ConnectByRootOperator(Column column) {
@@ -47,6 +47,11 @@ public class ConnectByRootOperator extends ASTNodeAccessImpl implements Expressi
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
+    }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
     
     public StringBuilder appendTo(StringBuilder builder) {

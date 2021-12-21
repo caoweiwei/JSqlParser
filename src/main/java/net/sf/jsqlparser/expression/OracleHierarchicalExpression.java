@@ -21,7 +21,11 @@ public class OracleHierarchicalExpression extends ASTNodeAccessImpl implements E
     public Expression getStartExpression() {
         return startExpression;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public void setStartExpression(Expression startExpression) {
         this.startExpression = startExpression;
     }

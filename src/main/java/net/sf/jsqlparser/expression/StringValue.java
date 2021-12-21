@@ -28,7 +28,11 @@ public final class StringValue extends ASTNodeAccessImpl implements Expression {
     public StringValue() {
         // empty constructor
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public StringValue(String escapedValue) {
         // removing "'" at the start and at the end
         if (escapedValue.startsWith("'") && escapedValue.endsWith("'")) {

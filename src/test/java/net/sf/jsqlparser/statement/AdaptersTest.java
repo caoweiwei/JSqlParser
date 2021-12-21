@@ -40,7 +40,7 @@ public class AdaptersTest {
                 select.getSelectBody().accept(new SelectVisitorAdapter() {
                     @Override
                     public void visit(PlainSelect plainSelect) {
-                        plainSelect.getWhere().accept(new ExpressionVisitorAdapter() {
+                        plainSelect.getWhere().acceptAndReturn(new ExpressionVisitorAdapter() {
                             @Override
                             protected void visitBinaryExpression(BinaryExpression expr) {
                                 if (!(expr instanceof AndExpression)) {

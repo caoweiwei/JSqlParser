@@ -285,4 +285,9 @@ public class JsonAggregateFunction extends FilterOverImpl implements Expression 
        StringBuilder builder = new StringBuilder();
        return append(builder).toString();
     }
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
 }

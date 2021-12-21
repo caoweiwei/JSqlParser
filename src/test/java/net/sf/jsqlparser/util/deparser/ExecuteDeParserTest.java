@@ -73,7 +73,7 @@ public class ExecuteDeParserTest {
 
         executeDeParser.deParse(execute);
 
-        then(expression1).should().accept(expressionVisitor);
-        then(expression2).should().accept(expressionVisitor);
+        then(expression1).should().acceptAndReturn(expressionVisitor);
+        then(expression2).should().acceptAndReturn(expressionVisitor);
     }
 }

@@ -19,7 +19,11 @@ public final class RowGetExpression extends ASTNodeAccessImpl implements Express
         this.expression = expression;
         this.columnName = columnName;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     @Override
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);

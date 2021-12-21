@@ -17,7 +17,7 @@ import net.sf.jsqlparser.parser.ASTNodeAccessImpl;
  *
  * @author tw
  */
-public class ExtractExpression extends ASTNodeAccessImpl implements Expression {
+public class ExtractExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private String name;
     private Expression expression;
@@ -26,7 +26,11 @@ public class ExtractExpression extends ASTNodeAccessImpl implements Expression {
     public void accept(ExpressionVisitor expressionVisitor) {
         expressionVisitor.visit(this);
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public String getName() {
         return name;
     }

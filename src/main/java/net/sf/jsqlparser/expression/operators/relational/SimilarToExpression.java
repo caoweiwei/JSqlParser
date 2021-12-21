@@ -21,7 +21,11 @@ public class SimilarToExpression extends BinaryExpression {
     public boolean isNot() {
         return not;
     }
-
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
+    }
     public void setNot(boolean b) {
         not = b;
     }

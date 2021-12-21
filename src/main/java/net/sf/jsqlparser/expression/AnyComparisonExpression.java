@@ -18,7 +18,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
  *
  * @author toben
  */
-public class AnyComparisonExpression extends ASTNodeAccessImpl implements Expression {
+public class AnyComparisonExpression extends ASTNodeAccessImpl implements Expression,  ReturnExpression {
 
     private final ItemsList itemsList;
     private boolean useBracketsForValues = false;
@@ -84,5 +84,11 @@ public class AnyComparisonExpression extends ASTNodeAccessImpl implements Expres
                     : "VALUES " + itemsList.toString())
                 + " )";
         return s;
+    }
+
+    @Override
+    public Expression acceptAndReturn(ExpressionVisitor expressionVisitor) {
+        expressionVisitor.visit(this);
+        return this;
     }
 }
