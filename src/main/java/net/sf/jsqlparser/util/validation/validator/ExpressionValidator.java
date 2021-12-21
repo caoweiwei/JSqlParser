@@ -353,9 +353,9 @@ public class ExpressionValidator extends AbstractValidator<Expression> implement
     }
 
     @Override
-    public void visit(CastExpression cast) {
+    public Expression visit(CastExpression cast) {
         cast.setLeftExpression(cast.getLeftExpression().acceptAndReturn(this));
-
+        return cast;
     }
 
     @Override

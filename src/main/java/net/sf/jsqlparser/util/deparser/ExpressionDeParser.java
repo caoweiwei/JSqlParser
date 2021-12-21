@@ -597,7 +597,7 @@ public class ExpressionDeParser extends AbstractDeParser<Expression>
     }
 
     @Override
-    public void visit(CastExpression cast) {
+    public Expression visit(CastExpression cast) {
         if (cast.isUseCastKeyword()) {
             buffer.append("CAST(");
             cast.setLeftExpression(cast.getLeftExpression().acceptAndReturn(this));
@@ -610,6 +610,7 @@ public class ExpressionDeParser extends AbstractDeParser<Expression>
             buffer.append("::");
             buffer.append(cast.getType());
         }
+        return cast;
     }
 
     @Override

@@ -113,7 +113,7 @@ public interface ExpressionVisitor {
 
     void visit(BitwiseXor bitwiseXor);
 
-    void visit(CastExpression cast);
+    Expression visit(CastExpression cast);
 
     void visit(TryCastExpression cast);
 

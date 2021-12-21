@@ -308,9 +308,10 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     }
 
     @Override
-    public void visit(CastExpression expr) {
+    public Expression visit(CastExpression expr) {
         expr.setLeftExpression(expr.getLeftExpression().acceptAndReturn(this));
 
+        return expr;
     }
 
     @Override
