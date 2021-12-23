@@ -12,7 +12,7 @@ public class TransformRule {
 
     public AbstractRuleItem to;
 
-    public Function<AbstractRuleItem, Boolean> condition;
+    public Function<AbstractRuleItem, Boolean> condition = abstractRuleItem -> Boolean.TRUE;
 
     public BiFunction<TransformRule, Expression, Expression> transformFunction;
 }

@@ -31,6 +31,8 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.select.UnPivot;
 import net.sf.jsqlparser.statement.select.WithItem;
 
+import java.util.List;
+
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.UncommentedEmptyMethodBody"})
 public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVisitor, PivotVisitor, SelectItemVisitor {
 
@@ -371,15 +373,22 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(ExpressionList expressionList) {
-        for (Expression expr : expressionList.getExpressions()) {
-            expr = expr.acceptAndReturn(this);
+        List<Expression> expressions = expressionList.getExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
+            Expression expr = expressions.get(i);
+            expressions.set(i, expr.acceptAndReturn(this));
         }
     }
 
     @Override
     public void visit(NamedExpressionList namedExpressionList) {
-        for (Expression expr : namedExpressionList.getExpressions()) {
-            expr = expr.acceptAndReturn(this);
+        List<Expression> expressions = namedExpressionList.getExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
+            Expression expr = expressions.get(i);
+            
+            expressions.set(i, expr.acceptAndReturn(this));
         }
     }
 
@@ -446,9 +455,14 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(MySQLGroupConcat groupConcat) {
-        for (Expression expr : groupConcat.getExpressionList().getExpressions()) {
-            expr = expr.acceptAndReturn(this);
+        List<Expression> expressions = groupConcat.getExpressionList().getExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
+            Expression expr = expressions.get(i);
+            
+            expressions.set(i, expr.acceptAndReturn(this));
         }
+
         if (groupConcat.getOrderByElements() != null) {
             for (OrderByElement element : groupConcat.getOrderByElements()) {
                 element.setExpression(element.getExpression().acceptAndReturn(this));
@@ -459,8 +473,12 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(ValueListExpression valueListExpression) {
-        for (Expression expr : valueListExpression.getExpressionList().getExpressions()) {
-            expr = expr.acceptAndReturn(this);
+        List<Expression> expressions = valueListExpression.getExpressionList().getExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
+            Expression expr = expressions.get(i);
+            
+            expressions.set(i, expr.acceptAndReturn(this));
         }
     }
 
@@ -526,9 +544,13 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
     @Override
     public void visit(RowConstructor rowConstructor) {
         if (rowConstructor.getColumnDefinitions().isEmpty()) {
-            for (Expression expression: rowConstructor.getExprList().getExpressions()) {
-                expression = expression.acceptAndReturn(this);
-              }
+            List<Expression> expressions = rowConstructor.getExprList().getExpressions();
+
+            for (int i = 0; i < expressions.size(); i++) {
+                Expression expr = expressions.get(i);
+                
+                expressions.set(i, expr.acceptAndReturn(this));
+            }
         } else {
             for (ColumnDefinition columnDefinition : rowConstructor.getColumnDefinitions()) {
                 columnDefinition.accept(this);
@@ -591,8 +613,12 @@ public class ExpressionVisitorAdapter implements ExpressionVisitor, ItemsListVis
 
     @Override
     public void visit(ArrayConstructor aThis) {
-        for (Expression expression : aThis.getExpressions()) {
-            expression = expression.acceptAndReturn(this);
+        List<Expression> expressions = aThis.getExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
+            Expression expr = expressions.get(i);
+            
+            expressions.set(i, expr.acceptAndReturn(this));
         }
     }
 

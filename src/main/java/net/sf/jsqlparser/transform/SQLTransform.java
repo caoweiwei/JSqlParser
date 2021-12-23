@@ -27,8 +27,8 @@ public class SQLTransform {
 
     public static void main(String[] args) throws JSQLParserException {
         System.out.println(
-                transform(SQLEngine.CLICKHOUSE, SQLEngine.PHOENIX,
-"select toint32ornull('1') from (select toint32ornull('1') from dual) where toint32ornull('1') = 1 and toint32ornull('1') order by uid desc")
+                transform(SQLEngine.PHOENIX, SQLEngine.CLICKHOUSE,
+            "select xxhash32(clc_usr_uid, 'prefix-')")
         );
     }
 }

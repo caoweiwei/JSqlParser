@@ -841,13 +841,19 @@ public class ExpressionDeParser extends AbstractDeParser<Expression>
             buffer.append(")");
         } else {
             boolean first = true;
-            for (Expression expr : rowConstructor.getExprList().getExpressions()) {
+
+            List<Expression> expressions = rowConstructor.getExprList().getExpressions();
+
+            for (int i = 0; i < expressions.size(); i++) {
                 if (first) {
                     first = false;
                 } else {
                     buffer.append(", ");
                 }
-                expr = expr.acceptAndReturn(this);
+
+                Expression expr = expressions.get(i);
+
+                expressions.set(i, expr.acceptAndReturn(this));
             }
         }
         buffer.append(")");
@@ -961,9 +967,13 @@ public class ExpressionDeParser extends AbstractDeParser<Expression>
     public void visit(TimezoneExpression var) {
         var.setLeftExpression(var.getLeftExpression().acceptAndReturn(this));
 
-        for (Expression expr : var.getTimezoneExpressions()) {
+        List<Expression> expressions = var.getTimezoneExpressions();
+
+        for (int i = 0; i < expressions.size(); i++) {
             buffer.append(" AT TIME ZONE ");
-            expr = expr.acceptAndReturn(this);
+            Expression expr = expressions.get(i);
+
+            expressions.set(i, expr.acceptAndReturn(this));
         }
     }
 

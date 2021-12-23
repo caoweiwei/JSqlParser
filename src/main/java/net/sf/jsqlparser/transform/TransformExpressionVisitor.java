@@ -3,11 +3,14 @@ package net.sf.jsqlparser.transform;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
-import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.transform.context.TransformContext;
-import net.sf.jsqlparser.transform.rule.ItemType;
+import net.sf.jsqlparser.transform.model.ExpressionType;
+import net.sf.jsqlparser.transform.rule.item.ItemType;
 import net.sf.jsqlparser.transform.rule.RuleMappingManager;
 import net.sf.jsqlparser.transform.rule.TransformRule;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
 
@@ -22,67 +25,37 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
 
     @Override
     public Expression visit(Function function) {
-        TransformRule rule = ruleMappingManager.getRule(transformContext, function, ItemType.FUNCTION);
-        if (rule != null) {
-            Expression expression = rule.transformFunction.apply(rule, function);
-            if (expression instanceof Function) {
-                return super.visit((Function) expression);
-            } else {
-                return expression.acceptAndReturn(this);
-            }
-        }
-
         super.visit(function);
-        return function;
+        transformContext.putReturnType(function);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, function, ItemType.FUNCTION);
+        return rule == null ? function : rule.transformFunction.apply(rule, function);
     }
 
     @Override
     public Expression visit(Addition expr) {
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.ADDITION);
-        if (rule != null) {
-            Expression expression = rule.transformFunction.apply(rule, expr);
-            if (expression instanceof Addition) {
-                return super.visit((Addition) expression);
-            } else {
-                return expression.acceptAndReturn(this);
-            }
-        }
-
         super.visit(expr);
-        return expr;
+        transformContext.putReturnType(expr);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.ADDITION);
+
+        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
     }
 
     @Override
     public Expression visit(Division expr) {
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.DIVISION);
-        if (rule != null) {
-            Expression expression = rule.transformFunction.apply(rule, expr);
-            if (expression instanceof Division) {
-                return super.visit((Division) expression);
-            } else {
-                return expression.acceptAndReturn(this);
-            }
-        }
-
         super.visit(expr);
-        return expr;
+        transformContext.putReturnType(expr);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.DIVISION);
+
+        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
     }
 
     @Override
     public Expression visit(CastExpression expr) {
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.CAST);
-        if (rule != null) {
-            Expression expression = rule.transformFunction.apply(rule, expr);
-
-            if (expression instanceof Division) {
-                return super.visit((Division) expression);
-            } else {
-                return expression.acceptAndReturn(this);
-            }
-        }
-
         super.visit(expr);
-        return expr;
+        transformContext.putReturnType(expr);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.CAST);
+
+        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
     }
 
 

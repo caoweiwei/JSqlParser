@@ -102,7 +102,7 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
      */
     public List<String> getTableList(Expression expr) {
         init(true);
-        expr = expr.acceptAndReturn(this);
+        expr.acceptAndReturn(this);
         return tables;
     }
 
@@ -994,12 +994,12 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
     public void visit(JsonAggregateFunction expression) {
         Expression expr = expression.getExpression();
         if (expr!=null) {
-            expr = expr.acceptAndReturn(this);
+            expr.acceptAndReturn(this);
         }
         
         expr = expression.getFilterExpression();
         if (expr!=null) {
-            expr = expr.acceptAndReturn(this);
+            expr.acceptAndReturn(this);
         }
      }
 

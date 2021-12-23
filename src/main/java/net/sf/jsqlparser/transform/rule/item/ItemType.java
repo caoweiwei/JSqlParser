@@ -1,4 +1,4 @@
-package net.sf.jsqlparser.transform.rule;
+package net.sf.jsqlparser.transform.rule.item;
 
 public enum ItemType {
     FUNCTION,
