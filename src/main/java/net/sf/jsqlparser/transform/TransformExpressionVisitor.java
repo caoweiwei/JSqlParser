@@ -26,42 +26,73 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
     @Override
     public Expression visit(Function function) {
         super.visit(function);
-        transformContext.putReturnType(function);
+
         TransformRule rule = ruleMappingManager.getRule(transformContext, function, ItemType.FUNCTION);
-        return rule == null ? function : rule.transformFunction.apply(rule, function);
+
+        if (rule == null) {
+            throw new RuntimeException(String.format("miss %s function %s.", transformContext.from, function));
+        }
+        Expression expression = rule.transformFunction.apply(rule, function);
+        transformContext.putReturnType(expression, transformContext.to);
+        return expression;
     }
 
     @Override
     public Expression visit(Addition expr) {
         super.visit(expr);
-        transformContext.putReturnType(expr);
+
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.ADDITION);
 
-        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
+        if (rule == null) {
+            transformContext.putReturnType(expr, transformContext.from);
+            return expr;
+        }
+        Expression expression = rule.transformFunction.apply(rule, expr);
+        transformContext.putReturnType(expression, transformContext.to);
+
+        return expression;
     }
 
     @Override
     public Expression visit(Division expr) {
         super.visit(expr);
-        transformContext.putReturnType(expr);
+
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.DIVISION);
 
-        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
+        if (rule == null) {
+            transformContext.putReturnType(expr, transformContext.from);
+            return expr;
+        }
+        Expression expression = rule.transformFunction.apply(rule, expr);
+        transformContext.putReturnType(expression, transformContext.to);
+
+        return expression;
     }
 
     @Override
     public Expression visit(CastExpression expr) {
         super.visit(expr);
-        transformContext.putReturnType(expr);
         TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.CAST);
 
-        return rule == null ? expr : rule.transformFunction.apply(rule, expr);
+        if (rule == null) {
+            transformContext.putReturnType(expr, transformContext.from);
+            return expr;
+        }
+        Expression expression = rule.transformFunction.apply(rule, expr);
+        transformContext.putReturnType(expression, transformContext.to);
+
+        return expression;
     }
 
 
     @Override
     public void visit(TimeKeyExpression timeKeyExpression) {
         TransformRule rule = ruleMappingManager.getRule(transformContext, timeKeyExpression, ItemType.TIMEKEY);
-        timeKeyExpression = (TimeKeyExpression)rule.transformFunction.apply(rule, timeKeyExpression);
+        if (rule == null) {
+            transformContext.putReturnType(timeKeyExpression, transformContext.from);
+        } else {
+            Expression expression = rule.transformFunction.apply(rule, timeKeyExpression);
+            transformContext.putReturnType(expression, transformContext.to);
+        }
     }
 }

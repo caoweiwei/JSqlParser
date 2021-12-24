@@ -9,6 +9,7 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.transform.ExpressionAndTypeMapping;
 import net.sf.jsqlparser.transform.context.TransformContext;
 import net.sf.jsqlparser.transform.model.ExpressionType;
 import net.sf.jsqlparser.transform.model.SQLEngine;
@@ -21,6 +22,7 @@ import net.sf.jsqlparser.transform.rule.item.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -167,7 +169,6 @@ public class RuleMappingManager {
 
                 Function function = (Function)from;
 
-
                 FunctionRuleItem functionRuleItem = (FunctionRuleItem)transformRule.to;
 
                 Function returnFunction = new Function();
@@ -179,196 +180,82 @@ public class RuleMappingManager {
         TRANSFORM_RULE.add(transformRule);
     }
 
-    public TransformRule getRule(TransformContext transformContext, Expression expression, ItemType from) {
+    public TransformRule getRule(TransformContext transformContext, Expression expression, ItemType itemType) {
         List<TransformRule> ruleList = TRANSFORM_RULE.stream()
                 .filter(transformRule ->
                         transformRule.from.sqlEngine.equals(transformContext.from)
                             &&
                         transformRule.to.sqlEngine.equals(transformContext.to)).collect(Collectors.toList());
 
-        if (ItemType.FUNCTION.equals(from)) {
+        if (ItemType.FUNCTION.equals(itemType)) {
             Function function = (Function)expression;
-            ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.FUNCTION)).collect(Collectors.toList());
-            for (TransformRule transformRule : ruleList) {
-                List<Expression> paramExpressions = function.getParameters().getExpressions();
-                List<FunctionRuleItem.FunctionParam> functionRuleParams = ((FunctionRuleItem)transformRule.from).params;
-                if (function.getName().equalsIgnoreCase(((FunctionRuleItem)transformRule.from).functionName)
-                        &&
-                        paramExpressions.size() == functionRuleParams.size()) {
-                    List<ExpressionType> expressionTypeList = new ArrayList<>();
-                    for (Expression expr : function.getParameters().getExpressions()) {
-                        if (expr instanceof Function
-                                || expr instanceof Addition
-                                || expr instanceof Division
-                                || expr instanceof CastExpression
-                                || expr instanceof TimeKeyExpression) {
-                            expressionTypeList.add(transformContext.getReturnType(expr));
-                        }
-                        if (expr instanceof ComparisonOperator
-                                || expr instanceof InExpression
-                                || expr instanceof IsNullExpression) {
-                            expressionTypeList.add(ExpressionType.BOOL);
-                        }
-                        if (expr instanceof Column || expr instanceof StringValue) {
-                            expressionTypeList.add(ExpressionType.STRING);
-                        }
-                        if (expr instanceof LongValue || expr instanceof DoubleValue || expr instanceof SignedExpression) {
-                            expressionTypeList.add(ExpressionType.NUMBER);
-                        }
-                    }
+            ruleList = ruleList
+                    .stream()
+                    .filter(transformRule -> transformRule.from.itemType.equals(ItemType.FUNCTION)
+                            && function.getName().equalsIgnoreCase(((FunctionRuleItem)transformRule.from).functionName))
+                    .collect(Collectors.toList())
+                    .stream().map(transformRule -> {
 
-                    if (functionRuleParams
-                            .stream()
-                            .map(p -> p.expressionType)
-                            .collect(Collectors.toList())
-                            .equals(expressionTypeList)) {
-                        return transformRule;
-                    }
-                }
+                        List<ExpressionType> expressionTypeList = function.getParameters().getExpressions()
+                                .stream()
+                                .map(expr -> ExpressionAndTypeMapping.getExpressionReturnType(expr, transformContext))
+                                .collect(Collectors.toList());
+
+                        if (((FunctionRuleItem)transformRule.from).params
+                                .stream()
+                                .map(p -> p.expressionType)
+                                .collect(Collectors.toList())
+                                .equals(expressionTypeList)) {
+                            return transformRule;
+                        }
+                        return null;
+                    }).filter(Objects::nonNull).collect(Collectors.toList());
+
+            if (ruleList.size() > 0) {
+                return ruleList.get(0);
             }
         }
 
-        if (ItemType.ADDITION.equals(from)) {
+        if (ItemType.ADDITION.equals(itemType)) {
             Addition addition = (Addition)expression;
-            Expression leftExpression = addition.getLeftExpression();
-            Expression rightExpression = addition.getRightExpression();
-            ExpressionType leftExpressionType = null;
-            if (leftExpression instanceof Function
-                    || leftExpression instanceof Addition
-                    || leftExpression instanceof Division
-                    || leftExpression instanceof CastExpression
-                    || leftExpression instanceof TimeKeyExpression) {
-                leftExpressionType = transformContext.getReturnType(leftExpression);
-            }
-            if (leftExpression instanceof ComparisonOperator
-                    || leftExpression instanceof InExpression
-                    || leftExpression instanceof IsNullExpression) {
-                leftExpressionType = ExpressionType.BOOL;
-            }
-            if (leftExpression instanceof Column || leftExpression instanceof StringValue) {
-                leftExpressionType = ExpressionType.STRING;
-            }
-            if (leftExpression instanceof LongValue || leftExpression instanceof DoubleValue || leftExpression instanceof SignedExpression) {
-                leftExpressionType = ExpressionType.NUMBER;
-            }
 
-            ExpressionType rightExpressionType = null;
-            if (rightExpression instanceof Function
-                    || rightExpression instanceof Addition
-                    || rightExpression instanceof Division
-                    || rightExpression instanceof CastExpression
-                    || rightExpression instanceof TimeKeyExpression) {
-                rightExpressionType = transformContext.getReturnType(rightExpression);
-            }
-            if (rightExpression instanceof ComparisonOperator
-                    || rightExpression instanceof InExpression
-                    || rightExpression instanceof IsNullExpression) {
-                rightExpressionType = ExpressionType.BOOL;
-            }
-            if (rightExpression instanceof Column || rightExpression instanceof StringValue) {
-                rightExpressionType = ExpressionType.STRING;
-            }
-            if (rightExpression instanceof LongValue || rightExpression instanceof DoubleValue || rightExpression instanceof SignedExpression) {
-                rightExpressionType = ExpressionType.NUMBER;
-            }
+            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
+            ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
 
-            ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.ADDITION)).collect(Collectors.toList());
-
-            ExpressionType finalLeftExpressionType = leftExpressionType;
-            ExpressionType finalRightExpressionType = rightExpressionType;
             ruleList = ruleList.stream().filter(transformRule ->
-                    ((AdditionRuleItem)transformRule.from).leftType.equals(finalLeftExpressionType)
-                    && ((AdditionRuleItem)transformRule.from).rightType.equals(finalRightExpressionType)
+                    transformRule.from.itemType.equals(ItemType.ADDITION)
+                    && ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType)
+                    && ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType)
             ).collect(Collectors.toList());
             if (ruleList.size()>0) {
                 return ruleList.get(0);
             }
         }
 
-        if (ItemType.DIVISION.equals(from)) {
+        if (ItemType.DIVISION.equals(itemType)) {
             Division division = (Division)expression;
-            Expression leftExpression = division.getLeftExpression();
-            Expression rightExpression = division.getRightExpression();
-            ExpressionType leftExpressionType = null;
-            if (leftExpression instanceof Function
-                    || leftExpression instanceof Addition
-                    || leftExpression instanceof Division
-                    || leftExpression instanceof CastExpression
-                    || leftExpression instanceof TimeKeyExpression) {
-                leftExpressionType = transformContext.getReturnType(leftExpression);
-            }
-            if (leftExpression instanceof ComparisonOperator
-                    || leftExpression instanceof InExpression
-                    || leftExpression instanceof IsNullExpression) {
-                leftExpressionType = ExpressionType.BOOL;
-            }
-            if (leftExpression instanceof Column || leftExpression instanceof StringValue) {
-                leftExpressionType = ExpressionType.STRING;
-            }
-            if (leftExpression instanceof LongValue || leftExpression instanceof DoubleValue || leftExpression instanceof SignedExpression) {
-                leftExpressionType = ExpressionType.NUMBER;
-            }
 
-            ExpressionType rightExpressionType = null;
-            if (rightExpression instanceof Function
-                    || rightExpression instanceof Addition
-                    || rightExpression instanceof Division
-                    || rightExpression instanceof CastExpression
-                    || rightExpression instanceof TimeKeyExpression) {
-                rightExpressionType = transformContext.getReturnType(rightExpression);
-            }
-            if (rightExpression instanceof ComparisonOperator
-                    || rightExpression instanceof InExpression
-                    || rightExpression instanceof IsNullExpression) {
-                rightExpressionType = ExpressionType.BOOL;
-            }
-            if (rightExpression instanceof Column || rightExpression instanceof StringValue) {
-                rightExpressionType = ExpressionType.STRING;
-            }
-            if (rightExpression instanceof LongValue || rightExpression instanceof DoubleValue || rightExpression instanceof SignedExpression) {
-                rightExpressionType = ExpressionType.NUMBER;
-            }
+            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
+            ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
 
-            ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.DIVISION)).collect(Collectors.toList());
-
-            ExpressionType finalLeftExpressionType = leftExpressionType;
-            ExpressionType finalRightExpressionType = rightExpressionType;
             ruleList = ruleList.stream().filter(transformRule ->
-                    ((DivisionRuleItem)transformRule.from).leftType.equals(finalLeftExpressionType)
-                            && ((DivisionRuleItem)transformRule.from).rightType.equals(finalRightExpressionType)
+                    transformRule.from.itemType.equals(ItemType.DIVISION)
+                            && ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType)
+                            && ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType)
             ).collect(Collectors.toList());
             if (ruleList.size()>0) {
                 return ruleList.get(0);
             }
         }
 
-        if (ItemType.CAST.equals(from)) {
+        if (ItemType.CAST.equals(itemType)) {
 
             CastExpression castExpression = (CastExpression)expression;
-            Expression leftExpression = castExpression.getLeftExpression();
-            ExpressionType leftExpressionType = null;
-            if (leftExpression instanceof Function
-                    || leftExpression instanceof Addition
-                    || leftExpression instanceof Division
-                    || leftExpression instanceof CastExpression
-                    || leftExpression instanceof TimeKeyExpression) {
-                leftExpressionType = transformContext.getReturnType(leftExpression);
-            }
-            if (leftExpression instanceof ComparisonOperator
-                    || leftExpression instanceof InExpression
-                    || leftExpression instanceof IsNullExpression) {
-                leftExpressionType = ExpressionType.BOOL;
-            }
-            if (leftExpression instanceof Column || leftExpression instanceof StringValue) {
-                leftExpressionType = ExpressionType.STRING;
-            }
-            if (leftExpression instanceof LongValue || leftExpression instanceof DoubleValue || leftExpression instanceof SignedExpression) {
-                leftExpressionType = ExpressionType.NUMBER;
-            }
-            ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.CAST)).collect(Collectors.toList());
+            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(castExpression.getLeftExpression(), transformContext);
 
-            ExpressionType finalLeftExpressionType = leftExpressionType;
-            ruleList = ruleList.stream().filter(transformRule -> ((CastRuleItem)transformRule.from).leftType.equals(finalLeftExpressionType) &&
+            ruleList = ruleList.stream().filter(transformRule ->
+                            transformRule.from.itemType.equals(ItemType.CAST) &&
+                            ((CastRuleItem)transformRule.from).leftType.equals(leftExpressionType) &&
                             ((CastRuleItem)transformRule.from).toType.equals(castExpression.getType().getDataType())
                     ).collect(Collectors.toList());
             if (ruleList.size()>0) {
@@ -376,7 +263,7 @@ public class RuleMappingManager {
             }
         }
         
-        if (ItemType.TIMEKEY.equals(from)) {
+        if (ItemType.TIMEKEY.equals(itemType)) {
             TimeKeyExpression timeKeyExpression = (TimeKeyExpression) expression;
             ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.TIMEKEY)).collect(Collectors.toList());
             ruleList = ruleList.stream().filter(transformRule -> ((TimeKeyRuleItem)transformRule.from).timekeyName.equals(timeKeyExpression.getStringValue())).collect(Collectors.toList());

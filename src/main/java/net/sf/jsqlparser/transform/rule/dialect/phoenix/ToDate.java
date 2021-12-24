@@ -31,7 +31,7 @@ public class ToDate {
                 SQLEngine.PHOENIX,
                 ItemType.FUNCTION,
                 FUNCTION_NAME,
-                ExpressionType.DATE,
+                ExpressionType.DATETIME,
                 Lists.newArrayList(
                         FunctionRuleItem
                                 .FunctionParam.builder()
@@ -50,7 +50,7 @@ public class ToDate {
                 SQLEngine.PHOENIX,
                 ItemType.FUNCTION,
                 FUNCTION_NAME,
-                ExpressionType.DATE,
+                ExpressionType.DATETIME,
                 Lists.newArrayList(
                         FunctionRuleItem
                                 .FunctionParam.builder()

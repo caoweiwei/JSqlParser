@@ -30,5 +30,13 @@ public class SQLTransform {
                 transform(SQLEngine.PHOENIX, SQLEngine.CLICKHOUSE,
             "select xxhash32(clc_usr_uid, 'prefix-')")
         );
+        System.out.println(
+                transform(SQLEngine.CLICKHOUSE, SQLEngine.PHOENIX,
+                        "select addSeconds(toDateTime64OrNull('2021-10-01 00:09:01'), 10)")
+        );
+        System.out.println(
+                transform(SQLEngine.CLICKHOUSE, SQLEngine.PHOENIX,
+                        "SELECT toInt32OrNull('123')")
+        );
     }
 }
