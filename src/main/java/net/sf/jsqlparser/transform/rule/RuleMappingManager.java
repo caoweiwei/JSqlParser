@@ -180,99 +180,83 @@ public class RuleMappingManager {
         TRANSFORM_RULE.add(transformRule);
     }
 
-    public TransformRule getRule(TransformContext transformContext, Expression expression, ItemType itemType) {
+    public TransformRule getRule(TransformContext transformContext, Function function) {
         List<TransformRule> ruleList = TRANSFORM_RULE.stream()
-                .filter(transformRule ->
-                        transformRule.from.sqlEngine.equals(transformContext.from)
-                            &&
-                        transformRule.to.sqlEngine.equals(transformContext.to)).collect(Collectors.toList());
+                .filter(transformRule -> transformRule.from.itemType.equals(ItemType.FUNCTION))
+                .filter(transformRule -> function.getName().equalsIgnoreCase(((FunctionRuleItem)transformRule.from).functionName))
+                .filter(transformRule -> transformRule.from.sqlEngine.equals(transformContext.from))
+                .filter(transformRule -> transformRule.to.sqlEngine.equals(transformContext.to))
+                .map(transformRule -> {
+                    List<ExpressionType> expressionTypeList = function.getParameters().getExpressions()
+                            .stream()
+                            .map(expr -> ExpressionAndTypeMapping.getExpressionReturnType(expr, transformContext))
+                            .collect(Collectors.toList());
 
-        if (ItemType.FUNCTION.equals(itemType)) {
-            Function function = (Function)expression;
-            ruleList = ruleList
-                    .stream()
-                    .filter(transformRule -> transformRule.from.itemType.equals(ItemType.FUNCTION)
-                            && function.getName().equalsIgnoreCase(((FunctionRuleItem)transformRule.from).functionName))
-                    .collect(Collectors.toList())
-                    .stream().map(transformRule -> {
+                    if (((FunctionRuleItem)transformRule.from).params
+                            .stream()
+                            .map(p -> p.expressionType)
+                            .collect(Collectors.toList())
+                            .equals(expressionTypeList)) {
+                        return transformRule;
+                    }
+                    return null;
+                }).filter(Objects::nonNull).collect(Collectors.toList());
 
-                        List<ExpressionType> expressionTypeList = function.getParameters().getExpressions()
-                                .stream()
-                                .map(expr -> ExpressionAndTypeMapping.getExpressionReturnType(expr, transformContext))
-                                .collect(Collectors.toList());
+        return ruleList.size() > 0 ? ruleList.get(0) : null;
+    }
 
-                        if (((FunctionRuleItem)transformRule.from).params
-                                .stream()
-                                .map(p -> p.expressionType)
-                                .collect(Collectors.toList())
-                                .equals(expressionTypeList)) {
-                            return transformRule;
-                        }
-                        return null;
-                    }).filter(Objects::nonNull).collect(Collectors.toList());
+    public TransformRule getRule(TransformContext transformContext, Addition addition) {
+        ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
+        ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
 
-            if (ruleList.size() > 0) {
-                return ruleList.get(0);
-            }
-        }
+        List<TransformRule> ruleList = TRANSFORM_RULE.stream()
+                .filter(transformRule -> transformRule.from.itemType.equals(ItemType.ADDITION))
+                .filter(transformRule -> transformRule.from.sqlEngine.equals(transformContext.from))
+                .filter(transformRule -> transformRule.to.sqlEngine.equals(transformContext.to))
+                .filter(transformRule -> ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType))
+                .filter(transformRule -> ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType))
+                .collect(Collectors.toList());
 
-        if (ItemType.ADDITION.equals(itemType)) {
-            Addition addition = (Addition)expression;
+        return ruleList.size() > 0 ? ruleList.get(0) : null;
+    }
 
-            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
-            ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(addition.getLeftExpression(), transformContext);
+    public TransformRule getRule(TransformContext transformContext, Division division) {
+        ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
+        ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
 
-            ruleList = ruleList.stream().filter(transformRule ->
-                    transformRule.from.itemType.equals(ItemType.ADDITION)
-                    && ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType)
-                    && ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType)
-            ).collect(Collectors.toList());
-            if (ruleList.size()>0) {
-                return ruleList.get(0);
-            }
-        }
+        List<TransformRule> ruleList = TRANSFORM_RULE.stream()
+                .filter(transformRule -> transformRule.from.itemType.equals(ItemType.DIVISION))
+                .filter(transformRule -> transformRule.from.sqlEngine.equals(transformContext.from))
+                .filter(transformRule -> transformRule.to.sqlEngine.equals(transformContext.to))
+                .filter(transformRule -> ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType))
+                .filter(transformRule -> ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType))
+                .collect(Collectors.toList());
 
-        if (ItemType.DIVISION.equals(itemType)) {
-            Division division = (Division)expression;
+        return ruleList.size() > 0 ? ruleList.get(0) : null;
+    }
 
-            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
-            ExpressionType rightExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(division.getLeftExpression(), transformContext);
+    public TransformRule getRule(TransformContext transformContext, CastExpression castExpression) {
+        ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(castExpression.getLeftExpression(), transformContext);
+        List<TransformRule> ruleList = TRANSFORM_RULE.stream()
+                .filter(transformRule -> transformRule.from.itemType.equals(ItemType.CAST))
+                .filter(transformRule -> transformRule.from.sqlEngine.equals(transformContext.from))
+                .filter(transformRule -> transformRule.to.sqlEngine.equals(transformContext.to))
+                .filter(transformRule -> ((CastRuleItem)transformRule.from).leftType.equals(leftExpressionType))
+                .filter(transformRule -> ((CastRuleItem)transformRule.from).toType.equals(castExpression.getType().getDataType()))
+                .collect(Collectors.toList());
 
-            ruleList = ruleList.stream().filter(transformRule ->
-                    transformRule.from.itemType.equals(ItemType.DIVISION)
-                            && ((AdditionRuleItem)transformRule.from).leftType.equals(leftExpressionType)
-                            && ((AdditionRuleItem)transformRule.from).rightType.equals(rightExpressionType)
-            ).collect(Collectors.toList());
-            if (ruleList.size()>0) {
-                return ruleList.get(0);
-            }
-        }
+        return ruleList.size() > 0 ? ruleList.get(0) : null;
+    }
 
-        if (ItemType.CAST.equals(itemType)) {
+    public TransformRule getRule(TransformContext transformContext, TimeKeyExpression timeKeyExpression) {
+        List<TransformRule> ruleList = TRANSFORM_RULE.stream()
+                .filter(transformRule -> transformRule.from.itemType.equals(ItemType.TIMEKEY))
+                .filter(transformRule -> transformRule.from.sqlEngine.equals(transformContext.from))
+                .filter(transformRule -> transformRule.to.sqlEngine.equals(transformContext.to))
+                .filter(transformRule -> ((TimeKeyRuleItem)transformRule.from).timekeyName.equals(timeKeyExpression.getStringValue()))
+                .collect(Collectors.toList());
 
-            CastExpression castExpression = (CastExpression)expression;
-            ExpressionType leftExpressionType = ExpressionAndTypeMapping.getExpressionReturnType(castExpression.getLeftExpression(), transformContext);
-
-            ruleList = ruleList.stream().filter(transformRule ->
-                            transformRule.from.itemType.equals(ItemType.CAST) &&
-                            ((CastRuleItem)transformRule.from).leftType.equals(leftExpressionType) &&
-                            ((CastRuleItem)transformRule.from).toType.equals(castExpression.getType().getDataType())
-                    ).collect(Collectors.toList());
-            if (ruleList.size()>0) {
-                return ruleList.get(0);
-            }
-        }
-        
-        if (ItemType.TIMEKEY.equals(itemType)) {
-            TimeKeyExpression timeKeyExpression = (TimeKeyExpression) expression;
-            ruleList = ruleList.stream().filter(transformRule -> transformRule.from.itemType.equals(ItemType.TIMEKEY)).collect(Collectors.toList());
-            ruleList = ruleList.stream().filter(transformRule -> ((TimeKeyRuleItem)transformRule.from).timekeyName.equals(timeKeyExpression.getStringValue())).collect(Collectors.toList());
-            if (ruleList.size()>0) {
-                return ruleList.get(0);
-            }
-        }
-
-        return null;
+        return ruleList.size() > 0 ? ruleList.get(0) : null;
     }
 
 }

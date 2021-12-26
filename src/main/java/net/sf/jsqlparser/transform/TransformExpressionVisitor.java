@@ -27,7 +27,7 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
     public Expression visit(Function function) {
         super.visit(function);
 
-        TransformRule rule = ruleMappingManager.getRule(transformContext, function, ItemType.FUNCTION);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, function);
 
         if (rule == null) {
             throw new RuntimeException(String.format("miss %s function %s.", transformContext.from, function));
@@ -41,7 +41,7 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
     public Expression visit(Addition expr) {
         super.visit(expr);
 
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.ADDITION);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr);
 
         if (rule == null) {
             transformContext.putReturnType(expr, transformContext.from);
@@ -57,7 +57,7 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
     public Expression visit(Division expr) {
         super.visit(expr);
 
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.DIVISION);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr);
 
         if (rule == null) {
             transformContext.putReturnType(expr, transformContext.from);
@@ -72,7 +72,7 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
     @Override
     public Expression visit(CastExpression expr) {
         super.visit(expr);
-        TransformRule rule = ruleMappingManager.getRule(transformContext, expr, ItemType.CAST);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, expr);
 
         if (rule == null) {
             transformContext.putReturnType(expr, transformContext.from);
@@ -87,7 +87,7 @@ public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
 
     @Override
     public void visit(TimeKeyExpression timeKeyExpression) {
-        TransformRule rule = ruleMappingManager.getRule(transformContext, timeKeyExpression, ItemType.TIMEKEY);
+        TransformRule rule = ruleMappingManager.getRule(transformContext, timeKeyExpression);
         if (rule == null) {
             transformContext.putReturnType(timeKeyExpression, transformContext.from);
         } else {
