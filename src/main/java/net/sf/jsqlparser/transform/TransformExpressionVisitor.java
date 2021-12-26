@@ -4,13 +4,8 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
 import net.sf.jsqlparser.transform.context.TransformContext;
-import net.sf.jsqlparser.transform.model.ExpressionType;
-import net.sf.jsqlparser.transform.rule.item.ItemType;
-import net.sf.jsqlparser.transform.rule.RuleMappingManager;
-import net.sf.jsqlparser.transform.rule.TransformRule;
-
-import java.util.HashMap;
-import java.util.Map;
+import net.sf.jsqlparser.transform.rule.manager.RuleMappingManager;
+import net.sf.jsqlparser.transform.rule.manager.TransformRule;
 
 public class TransformExpressionVisitor extends ExpressionVisitorAdapter {
 

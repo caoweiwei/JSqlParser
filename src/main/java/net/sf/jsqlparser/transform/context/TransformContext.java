@@ -3,15 +3,11 @@ package net.sf.jsqlparser.transform.context;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
-import net.sf.jsqlparser.expression.operators.relational.ComparisonOperator;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
-import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.transform.ExpressionAndTypeMapping;
 import net.sf.jsqlparser.transform.model.ExpressionType;
 import net.sf.jsqlparser.transform.model.SQLEngine;
-import net.sf.jsqlparser.transform.rule.RuleItemCollector;
-import net.sf.jsqlparser.transform.rule.item.*;
+import net.sf.jsqlparser.transform.rule.manager.RuleItemCollector;
+import net.sf.jsqlparser.transform.rule.manager.item.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -6,7 +6,7 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.transform.context.TransformContext;
 import net.sf.jsqlparser.transform.model.SQLEngine;
-import net.sf.jsqlparser.transform.rule.RuleMappingManager;
+import net.sf.jsqlparser.transform.rule.manager.RuleMappingManager;
 import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 public class SQLTransform {
