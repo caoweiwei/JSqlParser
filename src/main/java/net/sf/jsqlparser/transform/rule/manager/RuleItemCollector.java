@@ -29,7 +29,7 @@ public class RuleItemCollector {
             Reflections reflections = new Reflections(new ConfigurationBuilder()
                     .setScanners(new SubTypesScanner(false), new ResourcesScanner())
                     .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-                    .filterInputsBy(new FilterBuilder().includePackage(String.format("net.sf.jsqlparser.transform.rule.mapping.dialect.%s", sqlEngine.name().toLowerCase()))));
+                    .filterInputsBy(new FilterBuilder().includePackage(String.format("net.sf.jsqlparser.transform.rule.config.dialect.%s", sqlEngine.name().toLowerCase()))));
 
             Set<Class<?>> classes = reflections.getSubTypesOf(Object.class);
 
